@@ -1,0 +1,17 @@
+# Android
+bin/
+gen/
+build/
+*.class
+local.properties
+
+# Eclipse
+.settings/
+.classpath
+
+# General
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
