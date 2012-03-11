@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -12,6 +13,7 @@ public class LineUpCameraActivity extends Activity {
 	private final String TAG = "LineUpCameraActivity";
 	Camera mCamera;
 	CameraPreview mPreview;
+	CameraOverlay mOverlay;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -20,8 +22,12 @@ public class LineUpCameraActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		mPreview = new CameraPreview(this, mCamera);
+		mCamera = Camera.open();
+		mOverlay = new CameraOverlay(this);
+		mPreview = new CameraPreview(this, mCamera, mOverlay);
+		
 		setContentView(mPreview);
+		addContentView(mOverlay, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 	}
 
 	@Override
