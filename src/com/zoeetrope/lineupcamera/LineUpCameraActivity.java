@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -22,12 +21,14 @@ public class LineUpCameraActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		mCamera = Camera.open();
-		mOverlay = new CameraOverlay(this);
-		mPreview = new CameraPreview(this, mCamera, mOverlay);
+		setContentView(R.layout.camera);
 		
-		setContentView(mPreview);
-		addContentView(mOverlay, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		mOverlay = (CameraOverlay) findViewById(R.id.overlay);
+		mPreview = (CameraPreview) findViewById(R.id.preview);
+		
+		mCamera = Camera.open();
+		mPreview.setCamera(mCamera);
+		mPreview.setOverlay(mOverlay);
 	}
 
 	@Override

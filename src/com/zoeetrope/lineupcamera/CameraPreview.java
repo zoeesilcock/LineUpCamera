@@ -16,13 +16,15 @@ import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.Build;
 import android.os.Environment;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
 
-public class CameraPreview extends SurfaceView implements Callback, View.OnClickListener {
+public class CameraPreview extends SurfaceView implements Callback,
+		View.OnClickListener {
 
 	public static final int MEDIA_TYPE_IMAGE = 1;
 	private final String TAG = "CameraPreview";
@@ -36,7 +38,8 @@ public class CameraPreview extends SurfaceView implements Callback, View.OnClick
 		public void onPictureTaken(byte[] data, Camera camera) {
 			File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 			if (pictureFile == null) {
-				Log.d(TAG, "Error creating media file, check storage permissions");
+				Log.d(TAG,
+						"Error creating media file, check storage permissions");
 				return;
 			}
 
@@ -44,8 +47,9 @@ public class CameraPreview extends SurfaceView implements Callback, View.OnClick
 				FileOutputStream fos = new FileOutputStream(pictureFile);
 				fos.write(data);
 				fos.close();
-				
-				mOverlay.setImage(BitmapFactory.decodeFile(pictureFile.getAbsolutePath()));
+
+				mOverlay.setImage(BitmapFactory.decodeFile(pictureFile
+						.getAbsolutePath()));
 
 				camera.stopPreview();
 				camera.startPreview();
@@ -58,16 +62,28 @@ public class CameraPreview extends SurfaceView implements Callback, View.OnClick
 
 	};
 
-	public CameraPreview(Context context, Camera camera, CameraOverlay overlay) {
+	public CameraPreview(Context context) {
 		super(context);
 
-		setCamera(camera);
+		initialize();
+	}
 
+	public CameraPreview(Context context, AttributeSet attributes) {
+		super(context, attributes);
+
+		initialize();
+	}
+
+	public CameraPreview(Context context, AttributeSet attributes, int defStyle) {
+		super(context, attributes, defStyle);
+
+		initialize();
+	}
+
+	private void initialize() {
 		mHolder = getHolder();
 		mHolder.addCallback(this);
 		mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-		
-		mOverlay = overlay;
 
 		this.setOnClickListener(this);
 	}
@@ -77,13 +93,17 @@ public class CameraPreview extends SurfaceView implements Callback, View.OnClick
 		requestLayout();
 	}
 
+	public void setOverlay(CameraOverlay overlay) {
+		this.mOverlay = overlay;
+	}
+
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		if(mCamera != null) {
+		if (mCamera != null) {
 			try {
 				mCamera.setPreviewDisplay(holder);
 				mCamera.startPreview();
-				
+
 				requestLayout();
 			} catch (IOException e) {
 				Log.d(TAG, "Error setting camera preview: " + e.getMessage());
@@ -97,7 +117,7 @@ public class CameraPreview extends SurfaceView implements Callback, View.OnClick
 		if (mHolder.getSurface() == null) {
 			return;
 		}
-		
+
 		try {
 			mCamera.stopPreview();
 		} catch (Exception e) {
@@ -132,9 +152,9 @@ public class CameraPreview extends SurfaceView implements Callback, View.OnClick
 			mCamera.setPreviewDisplay(mHolder);
 			mCamera.setParameters(parameters);
 			mCamera.startPreview();
-			
+
 			mOverlay.invalidate();
-			
+
 			requestLayout();
 		} catch (Exception e) {
 			Log.d(TAG, "Error starting camera preview: " + e.getMessage());
@@ -159,13 +179,15 @@ public class CameraPreview extends SurfaceView implements Callback, View.OnClick
 
 	@Override
 	public void onClick(View v) {
-		if(mCamera != null) {
+		if (mCamera != null) {
 			mCamera.takePicture(null, null, mPicture);
 		}
 	}
 
 	private static File getOutputMediaFile(int type) {
-		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "MyCameraApp");
+		File mediaStorageDir = new File(
+				Environment.getExternalStoragePublicDirectory(
+				Environment.DIRECTORY_PICTURES), "MyCameraApp");
 
 		// Create the storage directory if it does not exist
 		if (!mediaStorageDir.exists()) {
