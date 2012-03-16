@@ -6,7 +6,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
@@ -14,6 +17,7 @@ import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.hardware.Camera.Size;
 import android.os.Build;
 import android.os.Environment;
 import android.util.AttributeSet;
@@ -22,6 +26,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.FrameLayout;
 
 public class CameraPreview extends SurfaceView implements Callback,
 		View.OnClickListener {
@@ -125,10 +130,18 @@ public class CameraPreview extends SurfaceView implements Callback,
 
 		try {
 			Camera.Parameters parameters = mCamera.getParameters();
-			List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+			List<Camera.Size> sizes = parameters.getSupportedPictureSizes();
+
 			Camera.Size cs = sizes.get(0);
+			parameters.setPictureSize(cs.width, cs.height);
+
+			sizes = parameters.getSupportedPreviewSizes();
+			cs = getOptimalPreviewSize(sizes);
 			
+			setLayoutParams(new FrameLayout.LayoutParams(cs.width, cs.height));
 			parameters.setPreviewSize(cs.width, cs.height);
+			mOverlay.setSize(cs.width, cs.height);
+			
 			parameters.setJpegQuality(90);
 
 			if (Integer.parseInt(Build.VERSION.SDK) >= 8) {
@@ -161,6 +174,30 @@ public class CameraPreview extends SurfaceView implements Callback,
 		}
 	}
 
+	private Size getOptimalPreviewSize(List<Size> previewSizes) {
+		Camera.Size optimalSize = null;
+		
+		Collections.sort(previewSizes, new Comparator<Camera.Size>() {
+			@Override
+			public int compare(Size lhs, Size rhs) {
+				return rhs.height - lhs.height;
+			}
+		});
+		
+		Iterator<Size> iterator = previewSizes.iterator();
+		
+		while(iterator.hasNext()) {
+			Camera.Size cs = iterator.next();
+			
+			if (cs.height <= getHeight()) {
+				optimalSize = cs;
+				break;
+			}
+		}
+
+		return optimalSize;
+	}
+
 	protected void setDisplayOrientation(Camera camera, int angle) {
 		Method downPolymorphic;
 		try {
@@ -180,14 +217,15 @@ public class CameraPreview extends SurfaceView implements Callback,
 	@Override
 	public void onClick(View v) {
 		if (mCamera != null) {
-			mCamera.takePicture(null, null, mPicture);
+			mCamera.takePicture(null, null, null, mPicture);
 		}
 	}
 
 	private static File getOutputMediaFile(int type) {
 		File mediaStorageDir = new File(
-				Environment.getExternalStoragePublicDirectory(
-				Environment.DIRECTORY_PICTURES), "MyCameraApp");
+				Environment
+						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+				"MyCameraApp");
 
 		// Create the storage directory if it does not exist
 		if (!mediaStorageDir.exists()) {
