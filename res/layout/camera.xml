@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent" >
 
     <com.zoeetrope.lineupcamera.CameraPreview
-	  android:id="@+id/preview"
-	  android:layout_width="fill_parent"
-	  android:layout_height="fill_parent"
-	  android:layout_gravity="center"/>
-    
+        android:id="@+id/preview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center" />
+
     <com.zoeetrope.lineupcamera.CameraOverlay
-      android:id="@+id/overlay"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_gravity="center"/>
+        android:id="@+id/overlay"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center" />
 
     <SeekBar
         android:id="@+id/overlayOpacity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:max="255"
-        android:background="@android:color/transparent"/>
+        android:background="@android:color/transparent"
+        android:max="255" />
 
 </FrameLayout>

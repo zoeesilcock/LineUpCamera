@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.SeekBar;
@@ -11,10 +15,11 @@ import android.widget.SeekBar;
 public class LineUpCameraActivity extends Activity {
 
 	private final String TAG = "LineUpCameraActivity";
-	Camera mCamera;
-	CameraPreview mPreview;
-	CameraOverlay mOverlay;
-	SeekBar mOverlayOpacity;
+	private Camera mCamera;
+	private CameraPreview mPreview;
+	private CameraOverlay mOverlay;
+	private SeekBar mOverlayOpacity;
+	private GestureDetector mGestureDetector;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -24,17 +29,28 @@ public class LineUpCameraActivity extends Activity {
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		setContentView(R.layout.camera);
-		
+
 		mOverlay = (CameraOverlay) findViewById(R.id.overlay);
 		mPreview = (CameraPreview) findViewById(R.id.preview);
 		mOverlayOpacity = (SeekBar) findViewById(R.id.overlayOpacity);
-		
+
 		mCamera = Camera.open();
 		mPreview.setCamera(mCamera);
 		mPreview.setOverlay(mOverlay);
-		
+
+		mGestureDetector = new GestureDetector(this, new CameraGestureListener(
+				this));
+
+		OnTouchListener gestureListener = new View.OnTouchListener() {
+			public boolean onTouch(View v, MotionEvent event) {
+				return mGestureDetector.onTouchEvent(event);
+			}
+		};
+
+		mPreview.setOnTouchListener(gestureListener);
+
 		mOverlayOpacity.setProgress(100);
-		mOverlayOpacity.setOnSeekBarChangeListener(opacityListener);
+		mOverlayOpacity.setOnSeekBarChangeListener(mOpacityListener);
 	}
 
 	@Override
@@ -59,12 +75,12 @@ public class LineUpCameraActivity extends Activity {
 			mCamera = null;
 		}
 	}
-	
-	private SeekBar.OnSeekBarChangeListener opacityListener =
-			new SeekBar.OnSeekBarChangeListener() {
-		
+
+	private SeekBar.OnSeekBarChangeListener mOpacityListener = new SeekBar.OnSeekBarChangeListener() {
+
 		@Override
-		public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+		public void onProgressChanged(SeekBar seekBar, int progress,
+				boolean fromUser) {
 			mOverlay.setOpacity(progress);
 		}
 
@@ -76,5 +92,16 @@ public class LineUpCameraActivity extends Activity {
 		public void onStopTrackingTouch(SeekBar seekBar) {
 		};
 	};
+
+	public void toggleControls() {
+		switch (mOverlayOpacity.getVisibility()) {
+		case SeekBar.INVISIBLE:
+			mOverlayOpacity.setVisibility(SeekBar.VISIBLE);
+			break;
+		case SeekBar.VISIBLE:
+			mOverlayOpacity.setVisibility(SeekBar.INVISIBLE);
+			break;
+		}
+	}
 
 }

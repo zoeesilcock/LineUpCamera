@@ -37,6 +37,7 @@ public class CameraPreview extends SurfaceView implements Callback,
 	private Camera mCamera;
 	private SurfaceHolder mHolder;
 	private CameraOverlay mOverlay;
+
 	private PictureCallback mPicture = new PictureCallback() {
 
 		@Override
@@ -137,11 +138,11 @@ public class CameraPreview extends SurfaceView implements Callback,
 
 			sizes = parameters.getSupportedPreviewSizes();
 			cs = getOptimalPreviewSize(sizes);
-			
+
 			setLayoutParams(new FrameLayout.LayoutParams(cs.width, cs.height));
 			parameters.setPreviewSize(cs.width, cs.height);
 			mOverlay.setSize(cs.width, cs.height);
-			
+
 			parameters.setJpegQuality(90);
 
 			if (Integer.parseInt(Build.VERSION.SDK) >= 8) {
@@ -176,19 +177,19 @@ public class CameraPreview extends SurfaceView implements Callback,
 
 	private Size getOptimalPreviewSize(List<Size> previewSizes) {
 		Camera.Size optimalSize = null;
-		
+
 		Collections.sort(previewSizes, new Comparator<Camera.Size>() {
 			@Override
 			public int compare(Size lhs, Size rhs) {
 				return rhs.height - lhs.height;
 			}
 		});
-		
+
 		Iterator<Size> iterator = previewSizes.iterator();
-		
-		while(iterator.hasNext()) {
+
+		while (iterator.hasNext()) {
 			Camera.Size cs = iterator.next();
-			
+
 			if (cs.height <= getHeight()) {
 				optimalSize = cs;
 				break;
