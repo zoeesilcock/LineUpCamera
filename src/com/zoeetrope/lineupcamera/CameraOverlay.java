@@ -17,6 +17,7 @@ public class CameraOverlay extends View {
 	Bitmap mImage;
 	int width;
 	int height;
+	int mOpacity = 100;
 
 	public CameraOverlay(Context context) {
 		super(context);
@@ -35,7 +36,7 @@ public class CameraOverlay extends View {
 			Rect dest = new Rect(0, 0, getWidth(), getHeight());
 			Paint paint = new Paint();
 			paint.setFilterBitmap(true);
-			paint.setAlpha(100);
+			paint.setAlpha(mOpacity);
 			Log.d(TAG, "Width: " + getWidth() + " Height: " + getHeight());
 			c.drawBitmap(mImage, null, dest, paint);
 
@@ -71,6 +72,11 @@ public class CameraOverlay extends View {
 				matrix, false);
 
 		return resizedBitmap;
+	}
+
+	public void setOpacity(int opacity) {
+		this.mOpacity = opacity;
+		invalidate();
 	}
 
 }

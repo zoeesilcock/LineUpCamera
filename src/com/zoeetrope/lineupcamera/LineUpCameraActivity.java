@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.SeekBar;
 
 public class LineUpCameraActivity extends Activity {
 
@@ -13,6 +14,7 @@ public class LineUpCameraActivity extends Activity {
 	Camera mCamera;
 	CameraPreview mPreview;
 	CameraOverlay mOverlay;
+	SeekBar mOverlayOpacity;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -25,10 +27,14 @@ public class LineUpCameraActivity extends Activity {
 		
 		mOverlay = (CameraOverlay) findViewById(R.id.overlay);
 		mPreview = (CameraPreview) findViewById(R.id.preview);
+		mOverlayOpacity = (SeekBar) findViewById(R.id.overlayOpacity);
 		
 		mCamera = Camera.open();
 		mPreview.setCamera(mCamera);
 		mPreview.setOverlay(mOverlay);
+		
+		mOverlayOpacity.setProgress(100);
+		mOverlayOpacity.setOnSeekBarChangeListener(opacityListener);
 	}
 
 	@Override
@@ -53,5 +59,22 @@ public class LineUpCameraActivity extends Activity {
 			mCamera = null;
 		}
 	}
+	
+	private SeekBar.OnSeekBarChangeListener opacityListener =
+			new SeekBar.OnSeekBarChangeListener() {
+		
+		@Override
+		public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+			mOverlay.setOpacity(progress);
+		}
+
+		@Override
+		public void onStartTrackingTouch(SeekBar seekBar) {
+		}
+
+		@Override
+		public void onStopTrackingTouch(SeekBar seekBar) {
+		};
+	};
 
 }
