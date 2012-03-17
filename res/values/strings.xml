@@ -3,5 +3,9 @@
 
     <string name="hello">Hello World, LineUpCameraActivity!</string>
     <string name="app_name">LineUpCamera</string>
+    <string name="new_album_button">New album</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="ok_button">OK</string>
+    <string name="ablum_name_dialog_title">New album</string>
 
 </resources>

@@ -26,6 +26,7 @@ public class LineUpCameraActivity extends Activity {
 	private SeekBar mOverlayOpacity;
 	private ImageButton mSwitchCamera;
 	private GestureDetector mGestureDetector;
+	private Bundle mExtras;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,11 @@ public class LineUpCameraActivity extends Activity {
 			}
 		};
 
+		mExtras = getIntent().getExtras();
+		if (mExtras != null) {
+			mPreview.setAlbumName(mExtras.getString("ALBUM"));
+		}
+
 		mPreview.setOnTouchListener(gestureListener);
 
 		mOverlayOpacity.setProgress(100);
@@ -65,7 +71,6 @@ public class LineUpCameraActivity extends Activity {
 
 				@Override
 				public void onClick(View v) {
-					// Find the total number of cameras available
 					int numberOfCameras = Camera.getNumberOfCameras();
 
 					if (mCamera != null) {

@@ -32,11 +32,12 @@ public class CameraPreview extends SurfaceView implements Callback,
 		View.OnClickListener {
 
 	public static final int MEDIA_TYPE_IMAGE = 1;
-	private final String TAG = "CameraPreview";
+	private final static String TAG = "CameraPreview";
 
 	private Camera mCamera;
 	private SurfaceHolder mHolder;
 	private CameraOverlay mOverlay;
+	private String mAlbumName = "Untitled album";
 
 	private PictureCallback mPicture = new PictureCallback() {
 
@@ -227,16 +228,23 @@ public class CameraPreview extends SurfaceView implements Callback,
 		}
 	}
 
-	private static File getOutputMediaFile(int type) {
+	private File getOutputMediaFile(int type) {
 		File mediaStorageDir = new File(
-				Environment
-						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-				"MyCameraApp");
+				Environment.getExternalStoragePublicDirectory(
+						Environment.DIRECTORY_PICTURES), "LineUpCamera");
 
 		// Create the storage directory if it does not exist
 		if (!mediaStorageDir.exists()) {
 			if (!mediaStorageDir.mkdirs()) {
-				Log.d("LineUpCamera", "failed to create directory");
+				Log.d(TAG, "failed to create directory");
+				return null;
+			}
+		}
+		
+		File albumFolder = new File(mediaStorageDir, mAlbumName);
+		if (!albumFolder.exists()) {
+			if (!albumFolder.mkdirs()) {
+				Log.d(TAG, "failed to create directory");
 				return null;
 			}
 		}
@@ -246,13 +254,17 @@ public class CameraPreview extends SurfaceView implements Callback,
 				.format(new Date());
 		File mediaFile;
 		if (type == MEDIA_TYPE_IMAGE) {
-			mediaFile = new File(mediaStorageDir.getPath() + File.separator
+			mediaFile = new File(albumFolder.getPath() + File.separator
 					+ "IMG_" + timeStamp + ".jpg");
 		} else {
 			return null;
 		}
 
 		return mediaFile;
+	}
+
+	public void setAlbumName(String name) {
+		mAlbumName = name;
 	}
 
 }
