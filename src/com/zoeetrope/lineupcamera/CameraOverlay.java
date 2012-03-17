@@ -48,7 +48,7 @@ public class CameraOverlay extends View {
 		Log.d(TAG,
 				"Image Width: " + image.getWidth() + " Height: "
 						+ image.getHeight());
-		mImage = this.getResizedBitmap(image, getHeight(), getWidth());
+		mImage = this.getResizedBitmap(image, this.width, this.height);
 
 		invalidate();
 	}
@@ -60,7 +60,7 @@ public class CameraOverlay extends View {
 		setLayoutParams(new FrameLayout.LayoutParams(width, height));
 	}
 
-	public Bitmap getResizedBitmap(Bitmap bm, int newHeight, int newWidth) {
+	public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
 		int width = bm.getWidth();
 		int height = bm.getHeight();
 		float scaleWidth = ((float) newWidth) / width;

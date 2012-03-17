@@ -45,6 +45,11 @@ public class LineUpCameraActivity extends Activity {
 
 		openCamera();
 		mPreview.setOverlay(mOverlay);
+		
+		mExtras = getIntent().getExtras();
+		if (mExtras != null) {
+			mPreview.setAlbumName(mExtras.getString("ALBUM"));
+		}
 
 		mGestureDetector = new GestureDetector(this, new CameraGestureListener(
 				this));
@@ -54,11 +59,6 @@ public class LineUpCameraActivity extends Activity {
 				return mGestureDetector.onTouchEvent(event);
 			}
 		};
-
-		mExtras = getIntent().getExtras();
-		if (mExtras != null) {
-			mPreview.setAlbumName(mExtras.getString("ALBUM"));
-		}
 
 		mPreview.setOnTouchListener(gestureListener);
 
