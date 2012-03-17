@@ -96,6 +96,7 @@ public class CameraPreview extends SurfaceView implements Callback,
 
 	public void setCamera(Camera camera) {
 		this.mCamera = camera;
+		setupCameraPreview();
 		requestLayout();
 	}
 
@@ -124,6 +125,10 @@ public class CameraPreview extends SurfaceView implements Callback,
 			return;
 		}
 
+		setupCameraPreview();
+	}
+
+	private void setupCameraPreview() {
 		try {
 			mCamera.stopPreview();
 		} catch (Exception e) {

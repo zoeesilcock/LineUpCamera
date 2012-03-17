@@ -2,6 +2,7 @@ package com.zoeetrope.lineupcamera;
 
 import android.app.Activity;
 import android.hardware.Camera;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -10,15 +11,20 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
 public class LineUpCameraActivity extends Activity {
 
 	private final String TAG = "LineUpCameraActivity";
 	private Camera mCamera;
+	private int mCurrentCameraId = 0;
 	private CameraPreview mPreview;
 	private CameraOverlay mOverlay;
+	private LinearLayout mControls;
 	private SeekBar mOverlayOpacity;
+	private ImageButton mSwitchCamera;
 	private GestureDetector mGestureDetector;
 
 	@Override
@@ -32,10 +38,11 @@ public class LineUpCameraActivity extends Activity {
 
 		mOverlay = (CameraOverlay) findViewById(R.id.overlay);
 		mPreview = (CameraPreview) findViewById(R.id.preview);
+		mControls = (LinearLayout) findViewById(R.id.controls);
 		mOverlayOpacity = (SeekBar) findViewById(R.id.overlayOpacity);
+		mSwitchCamera = (ImageButton) findViewById(R.id.switchCamera);
 
-		mCamera = Camera.open();
-		mPreview.setCamera(mCamera);
+		openCamera();
 		mPreview.setOverlay(mOverlay);
 
 		mGestureDetector = new GestureDetector(this, new CameraGestureListener(
@@ -51,6 +58,40 @@ public class LineUpCameraActivity extends Activity {
 
 		mOverlayOpacity.setProgress(100);
 		mOverlayOpacity.setOnSeekBarChangeListener(mOpacityListener);
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD &&
+				Camera.getNumberOfCameras() > 1) {
+			mSwitchCamera.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// Find the total number of cameras available
+					int numberOfCameras = Camera.getNumberOfCameras();
+
+					if (mCamera != null) {
+						mCamera.stopPreview();
+						mCamera.release();
+						mCamera = null;
+					}
+
+					mCurrentCameraId = (mCurrentCameraId + 1) % numberOfCameras;
+					openCamera();
+				}
+
+			});
+		} else {
+			mSwitchCamera.setVisibility(View.GONE);
+		}
+	}
+
+	private void openCamera() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+			mCamera = Camera.open(mCurrentCameraId);
+		} else {
+			mCamera = Camera.open();
+		}
+
+		mPreview.setCamera(mCamera);
 	}
 
 	@Override
@@ -58,8 +99,7 @@ public class LineUpCameraActivity extends Activity {
 		super.onResume();
 
 		try {
-			mCamera = Camera.open();
-			mPreview.setCamera(mCamera);
+			openCamera();
 		} catch (Exception e) {
 			Log.d(TAG, "Error opening the camera: " + e.getMessage());
 		}
@@ -94,12 +134,12 @@ public class LineUpCameraActivity extends Activity {
 	};
 
 	public void toggleControls() {
-		switch (mOverlayOpacity.getVisibility()) {
-		case SeekBar.INVISIBLE:
-			mOverlayOpacity.setVisibility(SeekBar.VISIBLE);
+		switch (mControls.getVisibility()) {
+		case LinearLayout.INVISIBLE:
+			mControls.setVisibility(LinearLayout.VISIBLE);
 			break;
-		case SeekBar.VISIBLE:
-			mOverlayOpacity.setVisibility(SeekBar.INVISIBLE);
+		case LinearLayout.VISIBLE:
+			mControls.setVisibility(LinearLayout.INVISIBLE);
 			break;
 		}
 	}

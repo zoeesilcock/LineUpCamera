@@ -15,12 +15,26 @@
         android:layout_height="fill_parent"
         android:layout_gravity="center" />
 
-    <SeekBar
-        android:id="@+id/overlayOpacity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@android:color/transparent"
-        android:max="255" />
+    <LinearLayout
+        android:id="@+id/controls"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom" >
+
+        <SeekBar
+            android:id="@+id/overlayOpacity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:background="@android:color/transparent"
+            android:max="255" />
+
+        <ImageButton
+            android:id="@+id/switchCamera"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_camera" />
+    </LinearLayout>
 
 </FrameLayout>
