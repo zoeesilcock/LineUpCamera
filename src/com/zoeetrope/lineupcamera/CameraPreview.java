@@ -14,12 +14,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
-import android.os.Build;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -116,31 +114,13 @@ public class CameraPreview extends SurfaceView implements Callback,
 			sizes = parameters.getSupportedPreviewSizes();
 			cs = getOptimalPreviewSize(sizes);
 
+			setDisplayOrientation(mCamera, 0);
 			setLayoutParams(new FrameLayout.LayoutParams(cs.width, cs.height));
 			parameters.setPreviewSize(cs.width, cs.height);
 			mOverlay.setSize(cs.width, cs.height);
 			
 			loadLastImage();
-
 			parameters.setJpegQuality(90);
-
-			if (Integer.parseInt(Build.VERSION.SDK) >= 8) {
-				if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-					setDisplayOrientation(mCamera, 90);
-				}
-				if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-					setDisplayOrientation(mCamera, 0);
-				}
-			} else {
-				if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-					parameters.set("orientation", "portrait");
-					parameters.set("rotation", 90);
-				}
-				if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-					parameters.set("orientation", "landscape");
-					parameters.set("rotation", 90);
-				}
-			}
 
 			mCamera.setPreviewDisplay(mHolder);
 			mCamera.setParameters(parameters);
