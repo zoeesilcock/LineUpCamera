@@ -1,24 +1,16 @@
 package com.zoeetrope.lineupcamera;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
-import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -30,13 +22,12 @@ import android.widget.FrameLayout;
 public class CameraPreview extends SurfaceView implements Callback,
 		View.OnClickListener {
 
-	public static final int MEDIA_TYPE_IMAGE = 1;
 	private final static String TAG = "CameraPreview";
 
 	private Camera mCamera;
 	private SurfaceHolder mHolder;
 	private CameraOverlay mOverlay;
-	private String mAlbumName = "Untitled album";
+	private Album mAlbum;
 
 	public CameraPreview(Context context) {
 		super(context);
@@ -60,6 +51,8 @@ public class CameraPreview extends SurfaceView implements Callback,
 		mHolder = getHolder();
 		mHolder.addCallback(this);
 		mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+
+		mAlbum = new Album("");
 
 		this.setOnClickListener(this);
 	}
@@ -118,15 +111,19 @@ public class CameraPreview extends SurfaceView implements Callback,
 			setLayoutParams(new FrameLayout.LayoutParams(cs.width, cs.height));
 			parameters.setPreviewSize(cs.width, cs.height);
 			mOverlay.setSize(cs.width, cs.height);
-			
-			loadLastImage();
+
 			parameters.setJpegQuality(90);
 
 			mCamera.setPreviewDisplay(mHolder);
 			mCamera.setParameters(parameters);
 			mCamera.startPreview();
 
-			mOverlay.invalidate();
+			try {
+				mOverlay.setImage(mAlbum.getLatestImage(mOverlay.getHeight()));
+				mOverlay.invalidate();
+			} catch (Exception e) {
+
+			}
 
 			requestLayout();
 		} catch (Exception e) {
@@ -181,113 +178,21 @@ public class CameraPreview extends SurfaceView implements Callback,
 		}
 	}
 
-	private File getOutputMediaFile(int type) {
-		File mediaStorageDir = new File(
-				Environment
-						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-				"LineUpCamera");
-
-		// Create the storage directory if it does not exist
-		if (!mediaStorageDir.exists()) {
-			if (!mediaStorageDir.mkdirs()) {
-				Log.d(TAG, "failed to create directory");
-				return null;
-			}
-		}
-
-		File albumFolder = new File(mediaStorageDir, mAlbumName);
-		if (!albumFolder.exists()) {
-			if (!albumFolder.mkdirs()) {
-				Log.d(TAG, "failed to create directory");
-				return null;
-			}
-		}
-
-		// Create a media file name
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
-				.format(new Date());
-		File mediaFile;
-		if (type == MEDIA_TYPE_IMAGE) {
-			mediaFile = new File(albumFolder.getPath() + File.separator
-					+ "IMG_" + timeStamp + ".jpg");
-		} else {
-			return null;
-		}
-
-		return mediaFile;
-	}
-
 	private PictureCallback mPicture = new PictureCallback() {
 
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
-			File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-			if (pictureFile == null) {
-				Log.d(TAG,
-						"Error creating media file, check storage permissions");
-				return;
-			}
+			mAlbum.saveNewImage(data);
 
-			try {
-				FileOutputStream fos = new FileOutputStream(pictureFile);
-				fos.write(data);
-				fos.close();
-
-				mOverlay.setImage(BitmapFactory.decodeFile(pictureFile
-						.getAbsolutePath()));
-
-				camera.stopPreview();
-				camera.startPreview();
-			} catch (FileNotFoundException e) {
-				Log.d(TAG, "File not found: " + e.getMessage());
-			} catch (IOException e) {
-				Log.d(TAG, "Error accessing file: " + e.getMessage());
-			}
+			mOverlay.setImage(mAlbum.getLatestImage(mOverlay.getHeight()));
+			camera.stopPreview();
+			camera.startPreview();
 		}
 
 	};
 
 	public void setAlbumName(String name) {
-		mAlbumName = name;
-	}
-	
-	private void loadLastImage() {
-		File pictureFile = null;
-		File mediaStorageDir = new File(
-				Environment
-						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-				"LineUpCamera");
-
-		File albumFolder = new File(mediaStorageDir, mAlbumName);
-		if (!albumFolder.exists()) {
-			if (!albumFolder.mkdirs()) {
-				Log.d(TAG, "failed to create directory");
-			}
-		}
-
-		File[] images = albumFolder.listFiles(new FileFilter() {
-			public boolean accept(File file) {
-				return file.isFile();
-			}
-		});
-
-		long lastMod = Long.MIN_VALUE;
-		for (File file : images) {
-			if (file.lastModified() > lastMod) {
-				pictureFile = file;
-				lastMod = file.lastModified();
-			}
-		}
-
-		if (pictureFile != null) {
-			Camera.Parameters parameters = mCamera.getParameters();
-			List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-			Camera.Size cs = getOptimalPreviewSize(sizes);
-			
-			mOverlay.setSize(cs.width, cs.height);
-			mOverlay.setImage(BitmapFactory.decodeFile(pictureFile
-					.getAbsolutePath()));
-		}
+		mAlbum.setName(name);
 	}
 
 }
