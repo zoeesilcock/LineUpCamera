@@ -1,4 +1,5 @@
 package com.zoeetrope.lineupcamera;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -19,7 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-
 public class AlbumListActivity extends ListActivity {
 
 	static final int DIALOG_NEW_ALBUM_ID = 0;
@@ -30,7 +30,7 @@ public class AlbumListActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.list);
 		loadAlbums();
 
@@ -41,46 +41,50 @@ public class AlbumListActivity extends ListActivity {
 			public void onClick(View v) {
 				AlbumListActivity.this.showDialog(DIALOG_NEW_ALBUM_ID);
 			}
-			
+
 		});
 	}
-	
+
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		Dialog dialog = null;
-		
-		switch(id) {
+
+		switch (id) {
 		case DIALOG_NEW_ALBUM_ID:
 			AlertDialog.Builder builder;
 			AlertDialog alertDialog;
 			Context context = AlbumListActivity.this;
-			LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
-			final View layout = inflater.inflate(R.layout.album_name_dialog, null);
+			LayoutInflater inflater = (LayoutInflater) context
+					.getSystemService(LAYOUT_INFLATER_SERVICE);
+			final View layout = inflater.inflate(R.layout.album_name_dialog,
+					null);
 
 			builder = new AlertDialog.Builder(context);
 			builder.setView(layout);
 			builder.setTitle(R.string.ablum_name_dialog_title);
-			builder.setPositiveButton(R.string.ok_button, new OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					Intent cameraIntent = new Intent();
-					cameraIntent.setComponent(new ComponentName(
-							AlbumListActivity.this,
-							LineUpCameraActivity.class));
-					
-					EditText name = (EditText) layout.findViewById(R.id.albumName);
-					
-					Bundle bundle = new Bundle();
-					bundle.putString("ALBUM", name.getText().toString());
-					cameraIntent.putExtras(bundle);
-					
-					AlbumListActivity.this.startActivity(cameraIntent);
-				}
-			});
-			
+			builder.setPositiveButton(R.string.ok_button,
+					new OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Intent cameraIntent = new Intent();
+							cameraIntent.setComponent(new ComponentName(
+									AlbumListActivity.this,
+									LineUpCameraActivity.class));
+
+							EditText name = (EditText) layout
+									.findViewById(R.id.albumName);
+
+							Bundle bundle = new Bundle();
+							bundle.putString("ALBUM", name.getText().toString());
+							cameraIntent.putExtras(bundle);
+
+							AlbumListActivity.this.startActivity(cameraIntent);
+						}
+					});
+
 			alertDialog = builder.create();
-			
+
 			dialog = alertDialog;
 			break;
 		}
@@ -100,8 +104,7 @@ public class AlbumListActivity extends ListActivity {
 		super.onListItemClick(l, v, position, id);
 
 		Intent cameraIntent = new Intent();
-		cameraIntent.setComponent(new ComponentName(
-				AlbumListActivity.this,
+		cameraIntent.setComponent(new ComponentName(AlbumListActivity.this,
 				LineUpCameraActivity.class));
 
 		Bundle bundle = new Bundle();
@@ -114,8 +117,9 @@ public class AlbumListActivity extends ListActivity {
 	private void loadAlbums() {
 		mAlbums = new ArrayList<Album>();
 		File storageFolder = new File(
-				Environment.getExternalStoragePublicDirectory(
-						Environment.DIRECTORY_PICTURES), "LineUpCamera");
+				Environment
+						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+				"LineUpCamera");
 
 		if (!storageFolder.exists()) {
 			if (!storageFolder.mkdirs()) {

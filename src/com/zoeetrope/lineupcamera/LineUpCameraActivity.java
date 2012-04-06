@@ -45,7 +45,7 @@ public class LineUpCameraActivity extends Activity {
 
 		openCamera();
 		mPreview.setOverlay(mOverlay);
-		
+
 		mExtras = getIntent().getExtras();
 		if (mExtras != null) {
 			mPreview.setAlbumName(mExtras.getString("ALBUM"));
@@ -65,8 +65,8 @@ public class LineUpCameraActivity extends Activity {
 		mOverlayOpacity.setProgress(100);
 		mOverlayOpacity.setOnSeekBarChangeListener(mOpacityListener);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD &&
-				Camera.getNumberOfCameras() > 1) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD
+				&& Camera.getNumberOfCameras() > 1) {
 			mSwitchCamera.setOnClickListener(new View.OnClickListener() {
 
 				@Override
