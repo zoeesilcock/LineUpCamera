@@ -1,15 +1,17 @@
 package com.zoeetrope.lineupcamera;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+import android.content.ComponentName;
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -32,7 +34,7 @@ public class AlbumListAdapter extends ArrayAdapter<Album> {
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) mContext
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(mLayout, parent, false);
@@ -42,18 +44,15 @@ public class AlbumListAdapter extends ArrayAdapter<Album> {
 				.findViewById(R.id.thumbnail);
 
 		Album album = mAlbums.get(position);
-		Date lastModification = album.getLastModifiedDate();
-		Bitmap image = album.getLatestImage(200);
-		BitmapDrawable thumbnail = new BitmapDrawable(image);
-		float aspectRatio = (float) image.getWidth()
-				/ (float) image.getHeight();
+		Image image = album.getLatestImage();
+		BitmapDrawable thumbnail = new BitmapDrawable(image.getBitmap(200));
 
 		thumbnail.setBounds(new Rect(0, 0, Math.round(THUMBNAIL_HEIGHT
-				* aspectRatio), THUMBNAIL_HEIGHT));
+				* image.getAspectRatio()), THUMBNAIL_HEIGHT));
 
 		thumbnailView.setImageDrawable(thumbnail);
 		albumName.setText(album.getName());
-		albumDate.setText(lastModification.toString());
+		albumDate.setText(image.getModifiedDate().toString());
 
 		return rowView;
 	}

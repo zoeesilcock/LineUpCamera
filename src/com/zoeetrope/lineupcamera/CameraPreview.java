@@ -119,7 +119,8 @@ public class CameraPreview extends SurfaceView implements Callback,
 			mCamera.startPreview();
 
 			try {
-				mOverlay.setImage(mAlbum.getLatestImage(mOverlay.getHeight()));
+				mOverlay.setImage(mAlbum.getLatestImage().getBitmap(
+						mOverlay.getHeight()));
 				mOverlay.invalidate();
 			} catch (Exception e) {
 
@@ -184,7 +185,8 @@ public class CameraPreview extends SurfaceView implements Callback,
 		public void onPictureTaken(byte[] data, Camera camera) {
 			mAlbum.saveNewImage(data);
 
-			mOverlay.setImage(mAlbum.getLatestImage(mOverlay.getHeight()));
+			mOverlay.setImage(mAlbum.getLatestImage().getBitmap(
+					mOverlay.getHeight()));
 			camera.stopPreview();
 			camera.startPreview();
 		}

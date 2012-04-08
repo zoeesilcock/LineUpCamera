@@ -7,6 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 import android.graphics.Bitmap;
@@ -19,11 +22,23 @@ public class Album {
 	private final static String TAG = "Album";
 	public static final int MEDIA_TYPE_IMAGE = 1;
 
+	private ArrayList<Image> mImages;
+
+	public class ImageDateComparator implements Comparator<Image> {
+		@Override
+		public int compare(Image o1, Image o2) {
+			return o1.getModifiedDate().compareTo(o2.getModifiedDate());
+		}
+	}
+
 	public Date mLastModificationDate;
 	private String mName;
 
 	public Album(String name) {
 		this.mName = name;
+		this.mImages = new ArrayList<Image>();
+
+		this.loadImages();
 	}
 
 	public String getName() {
@@ -32,42 +47,19 @@ public class Album {
 
 	public void setName(String name) {
 		mName = name;
+		this.loadImages();
 	}
 
 	public Date getLastModifiedDate() {
 		return mLastModificationDate;
 	}
 
-	public Bitmap getLatestImage(int requiredHeight) {
-		File pictureFile = null;
-		File mediaStorageDir = new File(
-				Environment
-						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-				"LineUpCamera");
+	public ArrayList<Image> getImages() {
+		return mImages;
+	}
 
-		File albumFolder = new File(mediaStorageDir, mName);
-		if (!albumFolder.exists()) {
-			if (!albumFolder.mkdirs()) {
-				Log.d(TAG, "failed to create directory");
-			}
-		}
-
-		File[] images = albumFolder.listFiles(new FileFilter() {
-			public boolean accept(File file) {
-				return file.isFile();
-			}
-		});
-
-		long lastMod = Long.MIN_VALUE;
-		for (File file : images) {
-			if (file.lastModified() > lastMod) {
-				pictureFile = file;
-				lastMod = file.lastModified();
-			}
-		}
-
-		this.mLastModificationDate = new Date(pictureFile.lastModified());
-		return decodeFile(pictureFile, requiredHeight);
+	public Image getLatestImage() {
+		return mImages.get(mImages.size() - 1);
 	}
 
 	public void saveNewImage(byte[] data) {
@@ -84,7 +76,7 @@ public class Album {
 		}
 	}
 
-	private Bitmap decodeFile(File f, int requiredHeight) {
+	public Bitmap decodeFile(File f, int requiredHeight) {
 		try {
 			// Decode image size
 			BitmapFactory.Options o = new BitmapFactory.Options();
@@ -139,6 +131,33 @@ public class Album {
 		}
 
 		return mediaFile;
+	}
+
+	private void loadImages() {
+		File mediaStorageDir = new File(
+				Environment
+						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+				"LineUpCamera");
+		mImages.clear();
+
+		File albumFolder = new File(mediaStorageDir, mName);
+		if (!albumFolder.exists()) {
+			if (!albumFolder.mkdirs()) {
+				Log.d(TAG, "failed to create directory");
+			}
+		}
+
+		File[] images = albumFolder.listFiles(new FileFilter() {
+			public boolean accept(File file) {
+				return file.isFile();
+			}
+		});
+
+		for (File file : images) {
+			mImages.add(new Image(file));
+		}
+
+		Collections.sort(mImages, new ImageDateComparator());
 	}
 
 }
