@@ -31,7 +31,7 @@ public class AlbumListActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.list);
+		setContentView(R.layout.album_list);
 		loadAlbums();
 
 		mNewAlbumButton = (Button) findViewById(R.id.newAlbum);
@@ -133,6 +133,7 @@ public class AlbumListActivity extends ListActivity {
 			}
 		}
 
-		setListAdapter(new AlbumListAdapter(this, R.layout.list_item, mAlbums));
+		setListAdapter(new AlbumListAdapter(this, R.layout.album_list_item,
+				mAlbums));
 	}
 }

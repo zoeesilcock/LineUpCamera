@@ -40,6 +40,8 @@ public class AlbumListAdapter extends ArrayAdapter<Album> {
 		View rowView = inflater.inflate(mLayout, parent, false);
 		TextView albumName = (TextView) rowView.findViewById(R.id.albumName);
 		TextView albumDate = (TextView) rowView.findViewById(R.id.albumDate);
+		ImageView cameraButton = (ImageView) rowView
+				.findViewById(R.id.cameraButton);
 		ImageView thumbnailView = (ImageView) rowView
 				.findViewById(R.id.thumbnail);
 
@@ -53,6 +55,22 @@ public class AlbumListAdapter extends ArrayAdapter<Album> {
 		thumbnailView.setImageDrawable(thumbnail);
 		albumName.setText(album.getName());
 		albumDate.setText(image.getModifiedDate().toString());
+
+		cameraButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent cameraIntent = new Intent();
+				cameraIntent.setComponent(new ComponentName(mContext,
+						LineUpCameraActivity.class));
+
+				Bundle bundle = new Bundle();
+				bundle.putString("ALBUM", mAlbums.get(position).getName());
+				cameraIntent.putExtras(bundle);
+
+				mContext.startActivity(cameraIntent);
+			}
+		});
 
 		return rowView;
 	}
