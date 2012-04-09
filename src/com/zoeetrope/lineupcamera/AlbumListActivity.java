@@ -103,15 +103,15 @@ public class AlbumListActivity extends ListActivity {
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 
-		Intent cameraIntent = new Intent();
-		cameraIntent.setComponent(new ComponentName(AlbumListActivity.this,
-				LineUpCameraActivity.class));
+		Intent imageListIntent = new Intent();
+		imageListIntent.setComponent(new ComponentName(AlbumListActivity.this,
+				ImageListActivity.class));
 
 		Bundle bundle = new Bundle();
 		bundle.putString("ALBUM", mAlbums.get(position).getName());
-		cameraIntent.putExtras(bundle);
+		imageListIntent.putExtras(bundle);
 
-		AlbumListActivity.this.startActivity(cameraIntent);
+		AlbumListActivity.this.startActivity(imageListIntent);
 	}
 
 	private void loadAlbums() {

@@ -9,33 +9,33 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 public class Image {
-	
+
 	private File mFile;
 	private Date mModificationDate;
-	
+
 	public Image(File imageFile) {
 		this.mFile = imageFile;
 		this.mModificationDate = new Date(imageFile.lastModified());
 	}
-	
+
 	public Date getModifiedDate() {
 		return this.mModificationDate;
 	}
-	
+
 	public String getName() {
 		return this.mFile.getName();
 	}
-	
+
 	public File getFile() {
 		return this.mFile;
 	}
-	
+
 	public float getAspectRatio() {
 		Bitmap image = getBitmap(200);
-		
+
 		return (float) image.getWidth() / (float) image.getHeight();
 	}
-	
+
 	public Bitmap getBitmap(int requiredHeight) {
 		try {
 			// Decode image size
@@ -51,7 +51,8 @@ public class Image {
 			// Decode with inSampleSize
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale;
-			return BitmapFactory.decodeStream(new FileInputStream(mFile), null, o2);
+			return BitmapFactory.decodeStream(new FileInputStream(mFile), null,
+					o2);
 		} catch (FileNotFoundException e) {
 		}
 		return null;
