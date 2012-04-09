@@ -2,6 +2,9 @@ package com.zoeetrope.lineupcamera;
 
 import java.text.DateFormat;
 
+import com.zoeetrope.lineupcamera.model.Album;
+import com.zoeetrope.lineupcamera.model.Image;
+
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;

@@ -3,6 +3,8 @@ package com.zoeetrope.lineupcamera;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.zoeetrope.lineupcamera.model.Album;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;

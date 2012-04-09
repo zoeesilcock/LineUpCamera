@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import com.zoeetrope.lineupcamera.model.Album;
+
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;

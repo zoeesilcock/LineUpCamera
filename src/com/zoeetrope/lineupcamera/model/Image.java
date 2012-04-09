@@ -1,4 +1,4 @@
-package com.zoeetrope.lineupcamera;
+package com.zoeetrope.lineupcamera.model;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -7,6 +7,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
+import com.zoeetrope.lineupcamera.model.Album;
+
 public class ImageListActivity extends Activity {
 
 	private Album mAlbum;

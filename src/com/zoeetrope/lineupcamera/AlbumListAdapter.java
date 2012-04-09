@@ -3,6 +3,9 @@ package com.zoeetrope.lineupcamera;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zoeetrope.lineupcamera.model.Album;
+import com.zoeetrope.lineupcamera.model.Image;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
