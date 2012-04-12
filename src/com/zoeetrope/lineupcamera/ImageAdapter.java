@@ -2,10 +2,8 @@ package com.zoeetrope.lineupcamera;
 
 import java.text.DateFormat;
 
-import com.zoeetrope.lineupcamera.model.Album;
-import com.zoeetrope.lineupcamera.model.Image;
-
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -14,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.zoeetrope.lineupcamera.model.Album;
+import com.zoeetrope.lineupcamera.model.Image;
 
 public class ImageAdapter extends BaseAdapter {
 
@@ -37,7 +38,8 @@ public class ImageAdapter extends BaseAdapter {
 		View rowView = inflater.inflate(mLayout, parent, false);
 		TextView albumDate = (TextView) rowView.findViewById(R.id.imageDate);
 		Image image = mAlbum.getImages().get(position);
-		Drawable thumbnail = new BitmapDrawable(image.getBitmap(200));
+		Bitmap bitmap = image.getBitmap(200);
+		Drawable thumbnail = new BitmapDrawable(bitmap);
 
 		thumbnail.setBounds(new Rect(0, 0, Math.round(THUMBNAIL_HEIGHT
 				* image.getAspectRatio()), THUMBNAIL_HEIGHT));

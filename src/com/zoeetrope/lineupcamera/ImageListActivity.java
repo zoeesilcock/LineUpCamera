@@ -1,6 +1,8 @@
 package com.zoeetrope.lineupcamera;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,7 +31,16 @@ public class ImageListActivity extends Activity {
 			gridview.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View v,
 						int position, long id) {
-					// Start the image viewer.
+					Intent imageIntent = new Intent();
+					imageIntent.setComponent(new ComponentName(
+							ImageListActivity.this, ImageActivity.class));
+
+					Bundle bundle = new Bundle();
+					bundle.putString("ALBUM", mAlbum.getName());
+					bundle.putInt("POSITION", position);
+					imageIntent.putExtras(bundle);
+
+					ImageListActivity.this.startActivity(imageIntent);
 				}
 			});
 		}
