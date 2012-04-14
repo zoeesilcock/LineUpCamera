@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.FloatMath;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,8 +22,10 @@ public class ImageActivity extends Activity implements OnTouchListener {
 	private Bitmap mBitmap;
 
 	private Point mStart = new Point();
+	private Point mMidPoint = new Point();
 	private Matrix mMatrix = new Matrix();
 	private Matrix mSavedMatrix = new Matrix();
+	private float mOldDistance = 0;
 
 	private static final int NONE = 0;
 	private static final int DRAG = 1;
@@ -75,11 +78,32 @@ public class ImageActivity extends Activity implements OnTouchListener {
 			mStart.set((int) event.getX(), (int) event.getY());
 			mMode = DRAG;
 			break;
+		case MotionEvent.ACTION_POINTER_DOWN:
+			mOldDistance = getPointDistance(event);
+
+			if (mOldDistance > 10f) {
+				mSavedMatrix.set(mMatrix);
+				updateMidPoint(mMidPoint, event);
+				mMode = ZOOM;
+			}
+			break;
 		case MotionEvent.ACTION_MOVE:
-			if (mMode == DRAG) {
+			float newDistance = 0;
+
+			if (mMode == ZOOM) {
+				newDistance = getPointDistance(event);
+			}
+
+			if (mMode == DRAG || (mMode == ZOOM && newDistance > 10f)) {
 				mMatrix.set(mSavedMatrix);
-				mMatrix.postTranslate(event.getX() - mStart.x, event.getY()
+
+				mMatrix.postTranslate(event.getX(0) - mStart.x, event.getY(0)
 						- mStart.y);
+
+				if (mMode == ZOOM) {
+					float scale = newDistance / mOldDistance;
+					mMatrix.postScale(scale, scale, mMidPoint.x, mMidPoint.y);
+				}
 			}
 			break;
 		case MotionEvent.ACTION_UP:
@@ -91,5 +115,18 @@ public class ImageActivity extends Activity implements OnTouchListener {
 		mImageView.setImageMatrix(mMatrix);
 
 		return true;
+	}
+
+	private float getPointDistance(MotionEvent event) {
+		float x = event.getX(0) - event.getX(1);
+		float y = event.getY(0) - event.getY(1);
+
+		return FloatMath.sqrt(x * x + y * y);
+	}
+
+	private void updateMidPoint(Point point, MotionEvent event) {
+		float x = event.getX(0) + event.getX(1);
+		float y = event.getY(0) + event.getY(1);
+		point.set(((int) x / 2), ((int) y / 2));
 	}
 }
