@@ -22,6 +22,7 @@ public class ImageActivity extends Activity implements OnTouchListener {
 	private Bitmap mBitmap;
 
 	private Point mStart = new Point();
+	private Point mPrevious = new Point();
 	private Point mMidPoint = new Point();
 	private Matrix mMatrix = new Matrix();
 	private Matrix mSavedMatrix = new Matrix();
@@ -31,6 +32,7 @@ public class ImageActivity extends Activity implements OnTouchListener {
 	private static final int DRAG = 1;
 	private static final int ZOOM = 2;
 	private int mMode = NONE;
+	private boolean mSwipeReset = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +79,7 @@ public class ImageActivity extends Activity implements OnTouchListener {
 			mSavedMatrix.set(mMatrix);
 			mStart.set((int) event.getX(), (int) event.getY());
 			mMode = DRAG;
+			mSwipeReset = false;
 			break;
 		case MotionEvent.ACTION_POINTER_DOWN:
 			mOldDistance = getPointDistance(event);
@@ -89,6 +92,18 @@ public class ImageActivity extends Activity implements OnTouchListener {
 			break;
 		case MotionEvent.ACTION_MOVE:
 			float newDistance = 0;
+			float swipeDistanceX = event.getX(0) - mPrevious.x;
+			float swipeDistanceY = event.getY(0) - mPrevious.y;
+
+			if (swipeDistanceX > 100 && !mSwipeReset
+					&& (swipeDistanceY < 50 && swipeDistanceY > -50)) {
+				showPreviousImage();
+				mSwipeReset = true;
+			} else if (swipeDistanceX < -100 && !mSwipeReset
+					&& (swipeDistanceY < 50 && swipeDistanceY > -50)) {
+				showNextImage();
+				mSwipeReset = true;
+			}
 
 			if (mMode == ZOOM) {
 				newDistance = getPointDistance(event);
@@ -112,9 +127,32 @@ public class ImageActivity extends Activity implements OnTouchListener {
 			break;
 		}
 
+		mPrevious.set((int) event.getX(), (int) event.getY());
 		mImageView.setImageMatrix(mMatrix);
 
 		return true;
+	}
+
+	private void showNextImage() {
+		mPosition += 1;
+
+		if (mPosition >= mAlbum.getImages().size()) {
+			mPosition = 0;
+		}
+
+		mBitmap.recycle();
+		loadImage();
+	}
+
+	private void showPreviousImage() {
+		mPosition -= 1;
+
+		if (mPosition < 0) {
+			mPosition = mAlbum.getImages().size() - 1;
+		}
+
+		mBitmap.recycle();
+		loadImage();
 	}
 
 	private float getPointDistance(MotionEvent event) {
