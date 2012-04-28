@@ -49,6 +49,7 @@ public class ImageActivity extends Activity implements OnTouchListener {
 			mAlbum = new Album(extras.getString("ALBUM"));
 			mPosition = extras.getInt("POSITION");
 			loadImage();
+			resetMatrix();
 		}
 	}
 
@@ -93,74 +94,90 @@ public class ImageActivity extends Activity implements OnTouchListener {
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
-			float newDistance = 0;
-			float swipeDistanceX = event.getX(0) - mPrevious.x;
-			float swipeDistanceY = event.getY(0) - mPrevious.y;
+			if (!mSwipeReset) {
+				float newDistance = 0;
+				float swipeDistanceX = event.getX(0) - mPrevious.x;
+				float swipeDistanceY = event.getY(0) - mPrevious.y;
 
-			if (swipeDistanceX > 100 && !mSwipeReset
-					&& (swipeDistanceY < 50 && swipeDistanceY > -50)) {
-				showPreviousImage();
-				mSwipeReset = true;
-			} else if (swipeDistanceX < -100 && !mSwipeReset
-					&& (swipeDistanceY < 50 && swipeDistanceY > -50)) {
-				showNextImage();
-				mSwipeReset = true;
-			}
+				if ((swipeDistanceX > 100 && (swipeDistanceY < 50 && swipeDistanceY > -50))
+						|| (swipeDistanceX < -100 && (swipeDistanceY < 50 && swipeDistanceY > -50))) {
+					float totalDistanceX = event.getX(0) - mStart.x
+							- swipeDistanceX;
+					float totalDistanceY = event.getY(0) - mStart.y
+							- swipeDistanceY;
+					totalDistanceX *= -1;
+					totalDistanceY *= -1;
 
-			if (mMode == ZOOM) {
-				newDistance = getPointDistance(event);
-			}
+					mMatrix.postTranslate(totalDistanceX, totalDistanceY);
 
-			if (mMode == DRAG || (mMode == ZOOM && newDistance > 10f)) {
-				mMatrix.set(mSavedMatrix);
-
-				// Extract all the info we need to limit the panning.
-				float[] matrixValues = new float[9];
-				mMatrix.getValues(matrixValues);
-				float translateX = event.getX(0) - mStart.x;
-				float translateY = event.getY(0) - mStart.y;
-				float currentY = matrixValues[Matrix.MTRANS_Y];
-				float currentX = matrixValues[Matrix.MTRANS_X];
-				float currentScale = matrixValues[Matrix.MSCALE_X];
-				float currentHeight = mBitmap.getHeight() * currentScale;
-				float currentWidth = mBitmap.getWidth() * currentScale;
-				float newX = currentX + translateX;
-				float newY = currentY + translateY;
-				RectF drawingRect = new RectF(newX, newY, newX + currentWidth,
-						newY + currentHeight);
-				Rect viewRect = new Rect();
-
-				mImageView.getLocalVisibleRect(viewRect);
-
-				// Calculate if we have exceeded the panning limits.
-				float diffUp = Math.min(viewRect.bottom - drawingRect.bottom,
-						viewRect.top - drawingRect.top);
-				float diffDown = Math.max(viewRect.bottom - drawingRect.bottom,
-						viewRect.top - drawingRect.top);
-				float diffLeft = Math.min(viewRect.left - drawingRect.left,
-						viewRect.right - drawingRect.right);
-				float diffRight = Math.max(viewRect.left - drawingRect.left,
-						viewRect.right - drawingRect.right);
-
-				// Apply a correction to keep the image within the limits.
-				if (diffUp > 0) {
-					translateY += diffUp;
+					if (swipeDistanceX > 0) {
+						showPreviousImage();
+					} else {
+						showNextImage();
+					}
+					mSwipeReset = true;
+					break;
 				}
-				if (diffDown < 0) {
-					translateY += diffDown;
-				}
-				if (diffLeft > 0) {
-					translateX += diffLeft;
-				}
-				if (diffRight < 0) {
-					translateX += diffRight;
-				}
-
-				mMatrix.postTranslate(translateX, translateY);
 
 				if (mMode == ZOOM) {
-					float scale = newDistance / mOldDistance;
-					mMatrix.postScale(scale, scale, mMidPoint.x, mMidPoint.y);
+					newDistance = getPointDistance(event);
+				}
+
+				if (mMode == DRAG || (mMode == ZOOM && newDistance > 10f)) {
+					mMatrix.set(mSavedMatrix);
+
+					// Extract all the info we need to limit the panning.
+					float[] matrixValues = new float[9];
+					mMatrix.getValues(matrixValues);
+					float translateX = event.getX(0) - mStart.x;
+					float translateY = event.getY(0) - mStart.y;
+					float currentY = matrixValues[Matrix.MTRANS_Y];
+					float currentX = matrixValues[Matrix.MTRANS_X];
+					float currentScale = matrixValues[Matrix.MSCALE_X];
+					float currentHeight = mBitmap.getHeight() * currentScale;
+					float currentWidth = mBitmap.getWidth() * currentScale;
+					float newX = currentX + translateX;
+					float newY = currentY + translateY;
+					RectF drawingRect = new RectF(newX, newY, newX
+							+ currentWidth, newY + currentHeight);
+					Rect viewRect = new Rect();
+
+					mImageView.getLocalVisibleRect(viewRect);
+
+					// Calculate if we have exceeded the panning limits.
+					float diffUp = Math.min(viewRect.bottom
+							- drawingRect.bottom, viewRect.top
+							- drawingRect.top);
+					float diffDown = Math.max(viewRect.bottom
+							- drawingRect.bottom, viewRect.top
+							- drawingRect.top);
+					float diffLeft = Math.min(viewRect.left - drawingRect.left,
+							viewRect.right - drawingRect.right);
+					float diffRight = Math.max(
+							viewRect.left - drawingRect.left, viewRect.right
+									- drawingRect.right);
+
+					// Apply a correction to keep the image within the limits.
+					if (diffUp > 0) {
+						translateY += diffUp;
+					}
+					if (diffDown < 0) {
+						translateY += diffDown;
+					}
+					if (diffLeft > 0) {
+						translateX += diffLeft;
+					}
+					if (diffRight < 0) {
+						translateX += diffRight;
+					}
+
+					mMatrix.postTranslate(translateX, translateY);
+
+					if (mMode == ZOOM) {
+						float scale = newDistance / mOldDistance;
+						mMatrix.postScale(scale, scale, mMidPoint.x,
+								mMidPoint.y);
+					}
 				}
 			}
 			break;
@@ -174,6 +191,21 @@ public class ImageActivity extends Activity implements OnTouchListener {
 		mImageView.setImageMatrix(mMatrix);
 
 		return true;
+	}
+
+	private void resetMatrix() {
+		Matrix m = mImageView.getImageMatrix();
+		RectF drawableRect = new RectF(0, 0, mBitmap.getWidth(),
+				mBitmap.getHeight());
+		RectF viewRect = new RectF(0, 0, mImageView.getWidth(),
+				mImageView.getHeight());
+
+		m.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.FILL);
+		m.setScale(1, 1);
+
+		mImageView.setImageMatrix(m);
+		mMatrix.set(m);
+		mSavedMatrix.set(m);
 	}
 
 	private void showNextImage() {
