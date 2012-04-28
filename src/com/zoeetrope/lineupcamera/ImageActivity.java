@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.FloatMath;
 import android.view.Display;
@@ -112,8 +114,49 @@ public class ImageActivity extends Activity implements OnTouchListener {
 			if (mMode == DRAG || (mMode == ZOOM && newDistance > 10f)) {
 				mMatrix.set(mSavedMatrix);
 
-				mMatrix.postTranslate(event.getX(0) - mStart.x, event.getY(0)
-						- mStart.y);
+				// Extract all the info we need to limit the panning.
+				float[] matrixValues = new float[9];
+				mMatrix.getValues(matrixValues);
+				float translateX = event.getX(0) - mStart.x;
+				float translateY = event.getY(0) - mStart.y;
+				float currentY = matrixValues[Matrix.MTRANS_Y];
+				float currentX = matrixValues[Matrix.MTRANS_X];
+				float currentScale = matrixValues[Matrix.MSCALE_X];
+				float currentHeight = mBitmap.getHeight() * currentScale;
+				float currentWidth = mBitmap.getWidth() * currentScale;
+				float newX = currentX + translateX;
+				float newY = currentY + translateY;
+				RectF drawingRect = new RectF(newX, newY, newX + currentWidth,
+						newY + currentHeight);
+				Rect viewRect = new Rect();
+
+				mImageView.getLocalVisibleRect(viewRect);
+
+				// Calculate if we have exceeded the panning limits.
+				float diffUp = Math.min(viewRect.bottom - drawingRect.bottom,
+						viewRect.top - drawingRect.top);
+				float diffDown = Math.max(viewRect.bottom - drawingRect.bottom,
+						viewRect.top - drawingRect.top);
+				float diffLeft = Math.min(viewRect.left - drawingRect.left,
+						viewRect.right - drawingRect.right);
+				float diffRight = Math.max(viewRect.left - drawingRect.left,
+						viewRect.right - drawingRect.right);
+
+				// Apply a correction to keep the image within the limits.
+				if (diffUp > 0) {
+					translateY += diffUp;
+				}
+				if (diffDown < 0) {
+					translateY += diffDown;
+				}
+				if (diffLeft > 0) {
+					translateX += diffLeft;
+				}
+				if (diffRight < 0) {
+					translateX += diffRight;
+				}
+
+				mMatrix.postTranslate(translateX, translateY);
 
 				if (mMode == ZOOM) {
 					float scale = newDistance / mOldDistance;
