@@ -38,7 +38,7 @@ public class ImageAdapter extends BaseAdapter {
 		View rowView = inflater.inflate(mLayout, parent, false);
 		TextView albumDate = (TextView) rowView.findViewById(R.id.imageDate);
 		Image image = mAlbum.getImages().get(position);
-		Bitmap bitmap = image.getBitmap(200);
+		Bitmap bitmap = image.getThumbnail();
 		Drawable thumbnail = new BitmapDrawable(bitmap);
 
 		thumbnail.setBounds(new Rect(0, 0, Math.round(THUMBNAIL_HEIGHT

@@ -50,7 +50,7 @@ public class AlbumListAdapter extends ArrayAdapter<Album> {
 
 		Album album = mAlbums.get(position);
 		Image image = album.getLatestImage();
-		BitmapDrawable thumbnail = new BitmapDrawable(image.getBitmap(200));
+		BitmapDrawable thumbnail = new BitmapDrawable(image.getThumbnail());
 
 		thumbnail.setBounds(new Rect(0, 0, Math.round(THUMBNAIL_HEIGHT
 				* image.getAspectRatio()), THUMBNAIL_HEIGHT));
