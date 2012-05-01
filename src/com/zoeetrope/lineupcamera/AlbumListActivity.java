@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,9 +57,8 @@ public class AlbumListActivity extends ListActivity {
 
 	@Override
 	protected Dialog onCreateDialog(int id, Bundle bundle) {
-		Dialog dialog = null;
 		AlertDialog.Builder builder;
-		AlertDialog alertDialog;
+		AlertDialog alertDialog = null;
 		Context context = AlbumListActivity.this;
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -108,10 +108,10 @@ public class AlbumListActivity extends ListActivity {
 		}
 
 		alertDialog = builder.create();
+		alertDialog.getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
-		dialog = alertDialog;
-
-		return dialog;
+		return alertDialog;
 	}
 
 	@Override

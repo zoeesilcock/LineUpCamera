@@ -9,7 +9,6 @@
         android:id="@+id/albumName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-        <requestFocus />
     </EditText>
 
 </LinearLayout>
