@@ -147,4 +147,25 @@ public class Album {
 		mImages.remove(position);
 	}
 
+	public void removeAlbum() {
+		for (Image image : mImages) {
+			image.remove();
+		}
+
+		mAlbumFolder.delete();
+	}
+
+	public void renameAlbum(String newName) {
+		if (mAlbumFolder != null) {
+			String albumPath = mAlbumFolder.getAbsolutePath();
+			albumPath = albumPath.substring(0,
+					albumPath.lastIndexOf(File.separator));
+
+			File newFile = new File(albumPath + File.separator + newName);
+
+			if (mAlbumFolder.renameTo(newFile)) {
+				setName(newName);
+			}
+		}
+	}
 }
