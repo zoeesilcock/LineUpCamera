@@ -92,6 +92,11 @@ public class AlbumListActivity extends ListActivity {
 			break;
 		case DIALOG_RENAME_ALBUM_ID:
 			final int albumIndex = bundle.getInt("ALBUM_INDEX");
+			EditText nameField = (EditText) layout.findViewById(R.id.albumName);
+			String albumName = mAlbums.get(albumIndex).getName();
+
+			nameField.setText(albumName);
+			nameField.setSelection(albumName.length());
 
 			builder.setPositiveButton(R.string.ok_button,
 					new OnClickListener() {
