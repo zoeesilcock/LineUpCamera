@@ -44,8 +44,12 @@ public class Image {
 		try {
 			exif = new ExifInterface(mFile.getPath());
 			byte[] thumbnail = exif.getThumbnail();
-			return BitmapFactory.decodeStream(new ByteArrayInputStream(
-					thumbnail), null, null);
+
+			ByteArrayInputStream stream = new ByteArrayInputStream(thumbnail);
+			Bitmap bitmap = BitmapFactory.decodeStream(stream, null, null);
+			stream.close();
+
+			return bitmap;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -69,8 +73,16 @@ public class Image {
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale;
 
-			return BitmapFactory.decodeStream(new FileInputStream(mFile), null,
-					o2);
+			Bitmap bitmap = null;
+			try {
+				FileInputStream fis = new FileInputStream(mFile);
+				bitmap = BitmapFactory.decodeStream(fis, null, o2);
+				fis.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return bitmap;
 		} catch (FileNotFoundException e) {
 		}
 

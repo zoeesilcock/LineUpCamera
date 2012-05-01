@@ -3,9 +3,6 @@ package com.zoeetrope.lineupcamera;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zoeetrope.lineupcamera.model.Album;
-import com.zoeetrope.lineupcamera.model.Image;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +16,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.zoeetrope.lineupcamera.model.Album;
+import com.zoeetrope.lineupcamera.model.Image;
 
 public class AlbumListAdapter extends ArrayAdapter<Album> {
 
@@ -50,17 +50,20 @@ public class AlbumListAdapter extends ArrayAdapter<Album> {
 
 		Album album = mAlbums.get(position);
 		Image image = album.getLatestImage();
-		BitmapDrawable thumbnail = new BitmapDrawable(image.getThumbnail());
 
-		thumbnail.setBounds(new Rect(0, 0, Math.round(THUMBNAIL_HEIGHT
-				* image.getAspectRatio()), THUMBNAIL_HEIGHT));
+		if (image != null) {
+			BitmapDrawable thumbnail = new BitmapDrawable(image.getThumbnail());
 
-		thumbnailView.setImageDrawable(thumbnail);
+			thumbnail.setBounds(new Rect(0, 0, Math.round(THUMBNAIL_HEIGHT
+					* image.getAspectRatio()), THUMBNAIL_HEIGHT));
+
+			thumbnailView.setImageDrawable(thumbnail);
+			albumDate.setText(image.getModifiedDate().toString());
+		}
+
 		albumName.setText(album.getName());
-		albumDate.setText(image.getModifiedDate().toString());
 
 		cameraButton.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				Intent cameraIntent = new Intent();

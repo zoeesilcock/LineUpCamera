@@ -2,7 +2,6 @@ package com.zoeetrope.lineupcamera.model;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,8 +11,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
@@ -23,6 +20,7 @@ public class Album {
 	public static final int MEDIA_TYPE_IMAGE = 1;
 
 	private ArrayList<Image> mImages;
+	private File mAlbumFolder;
 
 	public class ImageDateComparator implements Comparator<Image> {
 		@Override
@@ -47,6 +45,7 @@ public class Album {
 
 	public void setName(String name) {
 		mName = name;
+
 		this.loadImages();
 	}
 
@@ -59,7 +58,11 @@ public class Album {
 	}
 
 	public Image getLatestImage() {
-		return mImages.get(mImages.size() - 1);
+		if (mImages.size() > 0) {
+			return mImages.get(mImages.size() - 1);
+		} else {
+			return null;
+		}
 	}
 
 	public void saveNewImage(byte[] data) {
@@ -74,27 +77,6 @@ public class Album {
 		} catch (IOException e) {
 			Log.d(TAG, "Error accessing file: " + e.getMessage());
 		}
-	}
-
-	public Bitmap decodeFile(File f, int requiredHeight) {
-		try {
-			// Decode image size
-			BitmapFactory.Options o = new BitmapFactory.Options();
-			o.inJustDecodeBounds = true;
-			BitmapFactory.decodeStream(new FileInputStream(f), null, o);
-
-			// Find the correct scale value. It should be the power of 2.
-			int scale = 1;
-			while (o.outHeight / scale / 2 >= requiredHeight)
-				scale *= 2;
-
-			// Decode with inSampleSize
-			BitmapFactory.Options o2 = new BitmapFactory.Options();
-			o2.inSampleSize = scale;
-			return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
-		} catch (FileNotFoundException e) {
-		}
-		return null;
 	}
 
 	private File getOutputMediaFile(int type) {
@@ -140,14 +122,14 @@ public class Album {
 				"LineUpCamera");
 		mImages.clear();
 
-		File albumFolder = new File(mediaStorageDir, mName);
-		if (!albumFolder.exists()) {
-			if (!albumFolder.mkdirs()) {
+		mAlbumFolder = new File(mediaStorageDir, mName);
+		if (!mAlbumFolder.exists()) {
+			if (!mAlbumFolder.mkdirs()) {
 				Log.d(TAG, "failed to create directory");
 			}
 		}
 
-		File[] images = albumFolder.listFiles(new FileFilter() {
+		File[] images = mAlbumFolder.listFiles(new FileFilter() {
 			public boolean accept(File file) {
 				return file.isFile();
 			}
