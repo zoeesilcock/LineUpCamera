@@ -22,8 +22,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.zoeetrope.lineupcamera.model.Album;
@@ -34,7 +34,7 @@ public class AlbumListActivity extends ListActivity {
 	static final int DIALOG_RENAME_ALBUM_ID = 1;
 
 	private ArrayList<Album> mAlbums;
-	private Button mNewAlbumButton;
+	private ImageButton mNewAlbumButton;
 	private AlbumListAdapter mAdapter;
 
 	@Override
@@ -46,7 +46,7 @@ public class AlbumListActivity extends ListActivity {
 
 		registerForContextMenu(getListView());
 
-		mNewAlbumButton = (Button) findViewById(R.id.newAlbum);
+		mNewAlbumButton = (ImageButton) findViewById(R.id.newAlbum);
 		mNewAlbumButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
