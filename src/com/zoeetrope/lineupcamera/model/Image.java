@@ -10,7 +10,6 @@ import java.util.Date;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
-import android.util.Log;
 
 public class Image {
 
@@ -76,5 +75,9 @@ public class Image {
 		}
 
 		return null;
+	}
+
+	public void remove() {
+		mFile.delete();
 	}
 }

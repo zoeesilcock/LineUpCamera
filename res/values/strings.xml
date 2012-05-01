@@ -8,5 +8,6 @@
     <string name="ok_button">OK</string>
     <string name="ablum_name_dialog_title">New album</string>
     <string name="thumbnail_description">Preview</string>
+    <string name="context_remove">Remove</string>
 
 </resources>

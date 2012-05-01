@@ -160,4 +160,9 @@ public class Album {
 		Collections.sort(mImages, new ImageDateComparator());
 	}
 
+	public void remove(int position) {
+		mImages.get(position).remove();
+		mImages.remove(position);
+	}
+
 }
