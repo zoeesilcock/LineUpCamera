@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:layout_height="60dp"
+    android:orientation="horizontal"
+    android:background="#161616"
+    android:layout_margin="1dp">
 
     <ImageView
         android:id="@+id/cameraButton"
@@ -11,21 +13,23 @@
         android:layout_gravity="center_vertical"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:src="@android:drawable/ic_menu_camera" />
+        android:src="@android:drawable/ic_menu_camera"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" />
 
     <ImageView
         android:id="@+id/thumbnail"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/thumbnail_description"
-        android:padding="5dp" />
+        android:layout_height="match_parent"
+        android:contentDescription="@string/thumbnail_description" />
 
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp" >
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" >
 
         <TextView
             android:id="@+id/albumName"
