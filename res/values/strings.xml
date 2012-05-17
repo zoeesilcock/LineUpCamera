@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, LineUpCameraActivity!</string>
     <string name="app_name">LineUpCamera</string>
     <string name="new_album_button">New album</string>
     <string name="cancel_button">Cancel</string>
@@ -10,6 +9,7 @@
     <string name="thumbnail_description">Preview</string>
     <string name="context_remove">Remove</string>
     <string name="context_rename">Rename</string>
+    <string name="starting_camera">Starting camera...</string>
     <string name="dateformat">yyyy-MM-dd - HH:mm</string>
 
 </resources>

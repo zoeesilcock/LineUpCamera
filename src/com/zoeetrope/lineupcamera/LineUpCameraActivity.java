@@ -1,6 +1,7 @@
 package com.zoeetrope.lineupcamera;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -96,6 +97,20 @@ public class LineUpCameraActivity extends Activity {
 
 	private class OpenCameraTask extends AsyncTask<Void, Integer, Camera> {
 
+		private ProgressDialog mDialog;
+
+		@Override
+		protected void onPreExecute() {
+			String message = LineUpCameraActivity.this.getResources()
+					.getString(R.string.starting_camera);
+			mDialog = new ProgressDialog(LineUpCameraActivity.this);
+
+			mDialog.setMessage(message);
+			mDialog.setIndeterminate(true);
+			mDialog.setCancelable(false);
+			mDialog.show();
+		}
+
 		@Override
 		protected Camera doInBackground(Void... params) {
 			Camera camera = null;
@@ -113,6 +128,7 @@ public class LineUpCameraActivity extends Activity {
 		protected void onPostExecute(Camera result) {
 			mCamera = result;
 			mPreview.setCamera(mCamera);
+			mDialog.dismiss();
 		}
 
 	};
