@@ -8,9 +8,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -120,10 +122,7 @@ public class CameraPreview extends SurfaceView implements Callback,
 			mCamera.setParameters(parameters);
 			mCamera.startPreview();
 
-			mOverlay.setImage(mAlbum.getLatestImage().getResizedBitmap(
-					mOverlay.getWidth(), mOverlay.getHeight()));
-
-			requestLayout();
+			new LoadImageTask().execute();
 		} catch (Exception e) {
 			Log.d(TAG, "Error starting camera preview: " + e.getMessage());
 		}
@@ -182,9 +181,8 @@ public class CameraPreview extends SurfaceView implements Callback,
 		public void onPictureTaken(byte[] data, Camera camera) {
 			mAlbum.saveNewImage(data);
 
-			mOverlay.setImage(mAlbum.getLatestImage().getResizedBitmap(
-					mOverlay.getWidth(), mOverlay.getHeight()));
-			camera.stopPreview();
+			new LoadImageTask().execute();
+
 			camera.startPreview();
 		}
 
@@ -193,5 +191,21 @@ public class CameraPreview extends SurfaceView implements Callback,
 	public void setAlbumName(String name) {
 		mAlbum.setName(name);
 	}
+
+	private class LoadImageTask extends AsyncTask<Void, Integer, Bitmap> {
+
+		@Override
+		protected Bitmap doInBackground(Void... params) {
+			return mAlbum.getLatestImage().getResizedBitmap(
+					mOverlay.getWidth(), mOverlay.getHeight());
+		}
+
+		@Override
+		protected void onPostExecute(Bitmap result) {
+			mOverlay.setImage(result);
+			requestLayout();
+		}
+
+	};
 
 }
