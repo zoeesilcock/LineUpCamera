@@ -4,13 +4,15 @@ import java.text.DateFormat;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.zoeetrope.lineupcamera.model.Album;
@@ -18,7 +20,7 @@ import com.zoeetrope.lineupcamera.model.Image;
 
 public class ImageAdapter extends BaseAdapter {
 
-	private static int THUMBNAIL_HEIGHT = 200;
+	private static int COLUMN_WIDTH_DP = 150;
 
 	private Album mAlbum;
 	private Context mContext;
@@ -32,22 +34,31 @@ public class ImageAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		// Load the layout and find our gui elements.
 		LayoutInflater inflater = (LayoutInflater) mContext
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
 		View rowView = inflater.inflate(mLayout, parent, false);
 		TextView albumDate = (TextView) rowView.findViewById(R.id.imageDate);
+		LinearLayout gridItem = (LinearLayout) rowView
+				.findViewById(R.id.gridItem);
+
+		// Load the thumbnail.
 		Image image = mAlbum.getImages().get(position);
 		Bitmap bitmap = image.getThumbnail();
 		Drawable thumbnail = new BitmapDrawable(bitmap);
 
-		thumbnail.setBounds(new Rect(0, 0, Math.round(THUMBNAIL_HEIGHT
-				* image.getAspectRatio()), THUMBNAIL_HEIGHT));
+		// Calculate the height of the cell.
+		DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+		int cellWidth = Math.round(TypedValue.applyDimension(
+				TypedValue.COMPLEX_UNIT_DIP, COLUMN_WIDTH_DP, metrics));
+		int cellHeight = Math.round(cellWidth / image.getAspectRatio());
 
 		String date = DateFormat.getDateInstance().format(
 				image.getModifiedDate());
+
 		albumDate.setText(date);
-		albumDate.setCompoundDrawables(null, thumbnail, null, null);
+		gridItem.setBackgroundDrawable(thumbnail);
+		rowView.setMinimumHeight(cellHeight);
 
 		return rowView;
 	}
