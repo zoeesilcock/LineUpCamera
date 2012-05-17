@@ -3,7 +3,6 @@ package com.zoeetrope.lineupcamera;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -14,10 +13,8 @@ import android.widget.FrameLayout;
 public class CameraOverlay extends View {
 
 	private final String TAG = "CameraOverlay";
-	Bitmap mImage;
-	int width;
-	int height;
-	int mOpacity = 100;
+	private Bitmap mImage;
+	private int mOpacity = 100;
 
 	public CameraOverlay(Context context) {
 		super(context);
@@ -45,33 +42,12 @@ public class CameraOverlay extends View {
 	}
 
 	public void setImage(Bitmap image) {
-		Log.d(TAG,
-				"Image Width: " + image.getWidth() + " Height: "
-						+ image.getHeight());
-		mImage = this.getResizedBitmap(image, this.width, this.height);
-
+		mImage = image;
 		invalidate();
 	}
 
 	public void setSize(int width, int height) {
-		this.width = width;
-		this.height = height;
-
 		setLayoutParams(new FrameLayout.LayoutParams(width, height));
-	}
-
-	public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
-		int width = bm.getWidth();
-		int height = bm.getHeight();
-		float scaleWidth = ((float) newWidth) / width;
-		float scaleHeight = ((float) newHeight) / height;
-
-		Matrix matrix = new Matrix();
-		matrix.postScale(scaleWidth, scaleHeight);
-		Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height,
-				matrix, false);
-
-		return resizedBitmap;
 	}
 
 	public void setOpacity(int opacity) {

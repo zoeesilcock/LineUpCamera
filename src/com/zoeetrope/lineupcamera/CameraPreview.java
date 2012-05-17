@@ -7,8 +7,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import com.zoeetrope.lineupcamera.model.Album;
-
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
@@ -20,6 +18,8 @@ import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import com.zoeetrope.lineupcamera.model.Album;
 
 public class CameraPreview extends SurfaceView implements Callback,
 		View.OnClickListener {
@@ -120,13 +120,8 @@ public class CameraPreview extends SurfaceView implements Callback,
 			mCamera.setParameters(parameters);
 			mCamera.startPreview();
 
-			try {
-				mOverlay.setImage(mAlbum.getLatestImage().getBitmap(
-						mOverlay.getHeight()));
-				mOverlay.invalidate();
-			} catch (Exception e) {
-
-			}
+			mOverlay.setImage(mAlbum.getLatestImage().getResizedBitmap(
+					mOverlay.getWidth(), mOverlay.getHeight()));
 
 			requestLayout();
 		} catch (Exception e) {
@@ -187,8 +182,8 @@ public class CameraPreview extends SurfaceView implements Callback,
 		public void onPictureTaken(byte[] data, Camera camera) {
 			mAlbum.saveNewImage(data);
 
-			mOverlay.setImage(mAlbum.getLatestImage().getBitmap(
-					mOverlay.getHeight()));
+			mOverlay.setImage(mAlbum.getLatestImage().getResizedBitmap(
+					mOverlay.getWidth(), mOverlay.getHeight()));
 			camera.stopPreview();
 			camera.startPreview();
 		}

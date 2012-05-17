@@ -9,6 +9,7 @@ import java.util.Date;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.media.ExifInterface;
 
 public class Image {
@@ -87,6 +88,21 @@ public class Image {
 		}
 
 		return null;
+	}
+
+	public Bitmap getResizedBitmap(int newWidth, int newHeight) {
+		Bitmap bm = this.getBitmap(newHeight);
+		int width = bm.getWidth();
+		int height = bm.getHeight();
+		float scaleWidth = ((float) newWidth) / width;
+		float scaleHeight = ((float) newHeight) / height;
+
+		Matrix matrix = new Matrix();
+		matrix.postScale(scaleWidth, scaleHeight);
+		Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height,
+				matrix, false);
+
+		return resizedBitmap;
 	}
 
 	public void remove() {
