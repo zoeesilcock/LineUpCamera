@@ -1,6 +1,6 @@
 package com.zoeetrope.lineupcamera;
 
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -53,8 +53,10 @@ public class ImageAdapter extends BaseAdapter {
 				TypedValue.COMPLEX_UNIT_DIP, COLUMN_WIDTH_DP, metrics));
 		int cellHeight = Math.round(cellWidth / image.getAspectRatio());
 
-		String date = DateFormat.getDateInstance().format(
-				image.getModifiedDate());
+		String dateFormat = mContext.getResources().getString(
+				R.string.dateformat);
+		SimpleDateFormat df = new SimpleDateFormat(dateFormat);
+		String date = df.format(image.getModifiedDate());
 
 		albumDate.setText(date);
 		gridItem.setBackgroundDrawable(thumbnail);

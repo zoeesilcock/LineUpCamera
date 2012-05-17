@@ -10,5 +10,6 @@
     <string name="thumbnail_description">Preview</string>
     <string name="context_remove">Remove</string>
     <string name="context_rename">Rename</string>
+    <string name="dateformat">yyyy-MM-dd - HH:mm</string>
 
 </resources>

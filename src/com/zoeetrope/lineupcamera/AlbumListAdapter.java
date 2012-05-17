@@ -1,6 +1,8 @@
 package com.zoeetrope.lineupcamera;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.content.ComponentName;
@@ -53,12 +55,16 @@ public class AlbumListAdapter extends ArrayAdapter<Album> {
 
 		if (image != null) {
 			BitmapDrawable thumbnail = new BitmapDrawable(image.getThumbnail());
+			String dateFormat = mContext.getResources().getString(
+					R.string.dateformat);
+			Date modificationDate = image.getModifiedDate();
+			SimpleDateFormat df = new SimpleDateFormat(dateFormat);
 
 			thumbnail.setBounds(new Rect(0, 0, Math.round(THUMBNAIL_HEIGHT
 					* image.getAspectRatio()), THUMBNAIL_HEIGHT));
 
 			thumbnailView.setImageDrawable(thumbnail);
-			albumDate.setText(image.getModifiedDate().toString());
+			albumDate.setText(df.format(modificationDate));
 		}
 
 		albumName.setText(album.getName());
