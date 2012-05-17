@@ -2,6 +2,7 @@ package com.zoeetrope.lineupcamera;
 
 import android.app.Activity;
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,7 +44,6 @@ public class LineUpCameraActivity extends Activity {
 		mOverlayOpacity = (SeekBar) findViewById(R.id.overlayOpacity);
 		mSwitchCamera = (ImageButton) findViewById(R.id.switchCamera);
 
-		openCamera();
 		mPreview.setOverlay(mOverlay);
 
 		mExtras = getIntent().getExtras();
@@ -90,14 +90,32 @@ public class LineUpCameraActivity extends Activity {
 	}
 
 	private void openCamera() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			mCamera = Camera.open(mCurrentCameraId);
-		} else {
-			mCamera = Camera.open();
+		OpenCameraTask task = new OpenCameraTask();
+		task.execute();
+	}
+
+	private class OpenCameraTask extends AsyncTask<Void, Integer, Camera> {
+
+		@Override
+		protected Camera doInBackground(Void... params) {
+			Camera camera = null;
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+				camera = Camera.open(mCurrentCameraId);
+			} else {
+				camera = Camera.open();
+			}
+
+			return camera;
 		}
 
-		mPreview.setCamera(mCamera);
-	}
+		@Override
+		protected void onPostExecute(Camera result) {
+			mCamera = result;
+			mPreview.setCamera(mCamera);
+		}
+
+	};
 
 	@Override
 	protected void onResume() {
