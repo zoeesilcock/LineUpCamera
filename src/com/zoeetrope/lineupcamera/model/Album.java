@@ -72,6 +72,8 @@ public class Album {
 			FileOutputStream fos = new FileOutputStream(mediaFile);
 			fos.write(data);
 			fos.close();
+
+			mImages.add(new Image(mediaFile));
 		} catch (FileNotFoundException e) {
 			Log.d(TAG, "File not found: " + e.getMessage());
 		} catch (IOException e) {
