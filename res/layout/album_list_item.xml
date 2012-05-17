@@ -35,14 +35,16 @@
             android:id="@+id/albumName"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:textSize="24sp" >
+            android:textSize="24sp"
+            android:textColor="#fff" >
         </TextView>
 
         <TextView
             android:id="@+id/albumDate"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:textSize="12sp" >
+            android:textSize="12sp"
+            android:textColor="#fff" >
         </TextView>
     </LinearLayout>
 
