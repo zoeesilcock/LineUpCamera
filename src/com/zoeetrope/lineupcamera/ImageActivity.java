@@ -55,8 +55,8 @@ public class ImageActivity extends Activity implements OnTouchListener {
 
 	private void loadImage() {
 		Display display = getWindowManager().getDefaultDisplay();
-		mBitmap = mAlbum.getImages().get(mPosition)
-				.getBitmap(display.getHeight());
+		int bitmapHeight = Math.min(display.getHeight(), display.getWidth());
+		mBitmap = mAlbum.getImages().get(mPosition).getBitmap(bitmapHeight);
 
 		mImageView.setImageBitmap(mBitmap);
 	}
