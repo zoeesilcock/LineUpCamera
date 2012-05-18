@@ -69,14 +69,12 @@ public class ImageListActivity extends Activity {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
 
-		switch (item.getItemId()) {
-		case R.id.remove:
+		if (item.getItemId() == R.id.remove) {
 			mAlbum.remove(info.position);
-
 			mAdapter.notifyDataSetChanged();
 			mGridview.invalidateViews();
 			return true;
-		default:
+		} else {
 			return super.onContextItemSelected(item);
 		}
 	}

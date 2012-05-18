@@ -178,21 +178,18 @@ public class AlbumListActivity extends ListActivity {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
 
-		switch (item.getItemId()) {
-		case R.id.remove:
+		if (item.getItemId() == R.id.remove) {
 			mAlbums.get(info.position).removeAlbum();
 			mAlbums.remove(info.position);
-
 			mAdapter.notifyDataSetChanged();
 			getListView().invalidateViews();
 			return true;
-		case R.id.rename:
+		} else if (item.getItemId() == R.id.rename) {
 			Bundle bundle = new Bundle();
 			bundle.putInt("ALBUM_INDEX", info.position);
-
 			AlbumListActivity.this.showDialog(DIALOG_RENAME_ALBUM_ID, bundle);
 			return true;
-		default:
+		} else {
 			return super.onContextItemSelected(item);
 		}
 	}
