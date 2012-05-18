@@ -14,6 +14,8 @@ import android.widget.GridView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.zoeetrope.lineupcamera.model.Album;
 import com.zoeetrope.lineupcamera.model.Image;
@@ -95,12 +97,29 @@ public class ImageListActivity extends SherlockActivity {
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.action_bar_images, menu);
+		return true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == android.R.id.home) {
 			Intent intent = new Intent(this, AlbumListActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intent);
 			return true;
+		} else if (item.getItemId() == R.id.newPicture) {
+			Intent cameraIntent = new Intent();
+			cameraIntent.setComponent(new ComponentName(this,
+					LineUpCameraActivity.class));
+
+			Bundle bundle = new Bundle();
+			bundle.putString("ALBUM", mAlbum.getName());
+			cameraIntent.putExtras(bundle);
+
+			this.startActivity(cameraIntent);
 		}
 
 		return super.onOptionsItemSelected(item);

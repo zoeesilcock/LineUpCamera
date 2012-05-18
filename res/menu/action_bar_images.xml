@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/newAlbum"
-        android:icon="@drawable/new_album_icon"
-        android:title="@string/new_album_button"
+    <item android:id="@+id/newPicture" 
+        android:icon="@android:drawable/ic_menu_camera"
+        android:title="@string/new_image_button"
         android:showAsAction="always|withText"></item>
 </menu>
