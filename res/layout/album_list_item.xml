@@ -18,7 +18,8 @@
         android:paddingRight="10dp"
         android:layout_weight="1"
         android:scaleType="center"
-        android:background="@drawable/button_selector" />
+        android:background="@drawable/button_selector"
+        android:contentDescription="@string/take_picture_description" />
 
     <ImageView
         android:id="@+id/thumbnail"

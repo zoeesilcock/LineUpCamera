@@ -9,7 +9,8 @@
     <string name="thumbnail_description">Preview</string>
     <string name="context_remove">Remove</string>
     <string name="context_rename">Rename</string>
-    <string name="starting_camera">Starting camera...</string>
+    <string name="starting_camera">Starting camera&#8230;</string>
     <string name="dateformat">yyyy-MM-dd - HH:mm</string>
+    <string name="take_picture_description">Take a new picture in this album.</string>
 
 </resources>
