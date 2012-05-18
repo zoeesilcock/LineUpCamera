@@ -2,19 +2,21 @@ package com.zoeetrope.lineupcamera;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.zoeetrope.lineupcamera.model.Album;
+import com.zoeetrope.lineupcamera.model.Image;
 
 public class ImageListActivity extends SherlockActivity {
 
@@ -29,10 +31,23 @@ public class ImageListActivity extends SherlockActivity {
 		setContentView(R.layout.image_list);
 		mGridview = (GridView) findViewById(R.id.gridview);
 
+		ActionBar bar = getSupportActionBar();
 		Bundle extras = getIntent().getExtras();
+
 		if (extras != null) {
 			mAlbum = new Album(extras.getString("ALBUM"));
 			mAdapter = new ImageAdapter(this, R.layout.image_list_item, mAlbum);
+
+			bar.setTitle((CharSequence) mAlbum.getName());
+			bar.setDisplayHomeAsUpEnabled(true);
+			bar.setHomeButtonEnabled(true);
+
+			Image latestImage = mAlbum.getLatestImage();
+
+			if (latestImage != null) {
+				bar.setIcon(new BitmapDrawable(getResources(), latestImage
+						.getThumbnail()));
+			}
 
 			mGridview.setAdapter(mAdapter);
 			mGridview.setOnItemClickListener(new OnItemClickListener() {
@@ -60,12 +75,12 @@ public class ImageListActivity extends SherlockActivity {
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 
-		MenuInflater inflater = getMenuInflater();
+		android.view.MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.image_menu, menu);
 	}
 
 	@Override
-	public boolean onContextItemSelected(MenuItem item) {
+	public boolean onContextItemSelected(android.view.MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
 
@@ -77,5 +92,17 @@ public class ImageListActivity extends SherlockActivity {
 		} else {
 			return super.onContextItemSelected(item);
 		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
+			Intent intent = new Intent(this, AlbumListActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+			return true;
+		}
+
+		return super.onOptionsItemSelected(item);
 	}
 }

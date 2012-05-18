@@ -199,7 +199,7 @@ public class AlbumListActivity extends SherlockListActivity {
 			return true;
 		}
 
-		return false;
+		return super.onOptionsItemSelected(item);
 	}
 
 }
