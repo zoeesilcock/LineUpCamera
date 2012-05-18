@@ -9,14 +9,16 @@
     <ImageView
         android:id="@+id/cameraButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:src="@android:drawable/ic_menu_camera"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:scaleType="center"
+        android:background="@drawable/button_selector" />
 
     <ImageView
         android:id="@+id/thumbnail"
