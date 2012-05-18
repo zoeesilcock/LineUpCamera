@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.zoeetrope.lineupcamera.model.Album;
+import com.zoeetrope.lineupcamera.model.Image;
 
 public class CameraPreview extends SurfaceView implements Callback,
 		View.OnClickListener {
@@ -196,14 +197,22 @@ public class CameraPreview extends SurfaceView implements Callback,
 
 		@Override
 		protected Bitmap doInBackground(Void... params) {
-			return mAlbum.getLatestImage().getResizedBitmap(
-					mOverlay.getWidth(), mOverlay.getHeight());
+			Image latestImage = mAlbum.getLatestImage();
+
+			if (latestImage != null) {
+				return latestImage.getResizedBitmap(mOverlay.getWidth(),
+						mOverlay.getHeight());
+			}
+
+			return null;
 		}
 
 		@Override
 		protected void onPostExecute(Bitmap result) {
-			mOverlay.setImage(result);
-			requestLayout();
+			if (result != null) {
+				mOverlay.setImage(result);
+				requestLayout();
+			}
 		}
 
 	};
