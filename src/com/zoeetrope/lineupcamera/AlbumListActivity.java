@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,24 +16,24 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 
+import com.actionbarsherlock.app.SherlockListActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.zoeetrope.lineupcamera.model.Album;
 
-public class AlbumListActivity extends ListActivity {
+public class AlbumListActivity extends SherlockListActivity {
 
 	static final int DIALOG_NEW_ALBUM_ID = 0;
 	static final int DIALOG_RENAME_ALBUM_ID = 1;
 
 	private ArrayList<Album> mAlbums;
-	private ImageButton mNewAlbumButton;
 	private AlbumListAdapter mAdapter;
 
 	@Override
@@ -45,14 +44,6 @@ public class AlbumListActivity extends ListActivity {
 		loadAlbums();
 
 		registerForContextMenu(getListView());
-
-		mNewAlbumButton = (ImageButton) findViewById(R.id.newAlbum);
-		mNewAlbumButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				AlbumListActivity.this.showDialog(DIALOG_NEW_ALBUM_ID);
-			}
-		});
 	}
 
 	@Override
@@ -169,12 +160,12 @@ public class AlbumListActivity extends ListActivity {
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 
-		MenuInflater inflater = getMenuInflater();
+		android.view.MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.album_menu, menu);
 	}
 
 	@Override
-	public boolean onContextItemSelected(MenuItem item) {
+	public boolean onContextItemSelected(android.view.MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
 
@@ -193,4 +184,22 @@ public class AlbumListActivity extends ListActivity {
 			return super.onContextItemSelected(item);
 		}
 	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.action_bar_albums, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.newAlbum) {
+			this.showDialog(DIALOG_NEW_ALBUM_ID);
+			return true;
+		}
+
+		return false;
+	}
+
 }
