@@ -54,7 +54,8 @@ public class AlbumListAdapter extends ArrayAdapter<Album> {
 		Image image = album.getLatestImage();
 
 		if (image != null) {
-			BitmapDrawable thumbnail = new BitmapDrawable(image.getThumbnail());
+			BitmapDrawable thumbnail = new BitmapDrawable(
+					mContext.getResources(), image.getThumbnail());
 			String dateFormat = mContext.getResources().getString(
 					R.string.dateformat);
 			Date modificationDate = image.getModifiedDate();

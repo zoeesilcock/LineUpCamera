@@ -46,7 +46,7 @@ public class ImageAdapter extends BaseAdapter {
 		// Load the thumbnail.
 		Image image = mAlbum.getImages().get(position);
 		Bitmap bitmap = image.getThumbnail();
-		Drawable thumbnail = new BitmapDrawable(bitmap);
+		Drawable thumbnail = new BitmapDrawable(mContext.getResources(), bitmap);
 
 		// Calculate the height of the cell and apply it.
 		DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();

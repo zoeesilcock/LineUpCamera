@@ -52,6 +52,7 @@ public class CameraPreview extends SurfaceView implements Callback,
 		initialize();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initialize() {
 		mHolder = getHolder();
 		mHolder.addCallback(this);
