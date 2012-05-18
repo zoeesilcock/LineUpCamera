@@ -11,6 +11,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -47,12 +48,16 @@ public class ImageAdapter extends BaseAdapter {
 		Bitmap bitmap = image.getThumbnail();
 		Drawable thumbnail = new BitmapDrawable(bitmap);
 
-		// Calculate the height of the cell.
+		// Calculate the height of the cell and apply it.
 		DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
 		int cellWidth = Math.round(TypedValue.applyDimension(
 				TypedValue.COMPLEX_UNIT_DIP, COLUMN_WIDTH_DP, metrics));
 		int cellHeight = Math.round(cellWidth / image.getAspectRatio());
+		LayoutParams params = (LayoutParams) gridItem.getLayoutParams();
 
+		params.height = cellHeight;
+
+		// Format the date.
 		String dateFormat = mContext.getResources().getString(
 				R.string.dateformat);
 		SimpleDateFormat df = new SimpleDateFormat(dateFormat);
@@ -60,7 +65,6 @@ public class ImageAdapter extends BaseAdapter {
 
 		albumDate.setText(date);
 		gridItem.setBackgroundDrawable(thumbnail);
-		rowView.setMinimumHeight(cellHeight);
 
 		return rowView;
 	}
