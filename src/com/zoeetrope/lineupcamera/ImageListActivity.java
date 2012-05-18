@@ -1,6 +1,5 @@
 package com.zoeetrope.lineupcamera;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,9 +13,10 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.zoeetrope.lineupcamera.model.Album;
 
-public class ImageListActivity extends Activity {
+public class ImageListActivity extends SherlockActivity {
 
 	private Album mAlbum;
 	private GridView mGridview;
