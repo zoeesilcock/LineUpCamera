@@ -8,41 +8,43 @@
 
     <ImageView
         android:id="@+id/cameraButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:src="@android:drawable/ic_menu_camera"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
+        android:paddingRight="10dp"
+        android:layout_weight="1" />
 
     <ImageView
         android:id="@+id/thumbnail"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:contentDescription="@string/thumbnail_description" />
+        android:contentDescription="@string/thumbnail_description"
+        android:layout_weight="1" />
 
     <LinearLayout
         android:id="@+id/linearLayout1"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp" >
+        android:layout_weight="3" >
 
         <TextView
             android:id="@+id/albumName"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textSize="24sp"
             android:textColor="#fff" >
         </TextView>
 
         <TextView
             android:id="@+id/albumDate"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textSize="12sp"
             android:textColor="#fff" >
         </TextView>
