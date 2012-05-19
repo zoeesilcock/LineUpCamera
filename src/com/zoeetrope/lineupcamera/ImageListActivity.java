@@ -41,6 +41,8 @@ public class ImageListActivity extends SherlockActivity {
 			mAdapter = new ImageAdapter(this, R.layout.image_list_item, mAlbum);
 
 			bar.setTitle((CharSequence) mAlbum.getName());
+			bar.setSubtitle(mAlbum.getImages().size() + " "
+					+ getResources().getString(R.string.picture_count));
 			bar.setDisplayHomeAsUpEnabled(true);
 			bar.setHomeButtonEnabled(true);
 

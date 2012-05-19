@@ -13,5 +13,6 @@
     <string name="starting_camera">Starting camera&#8230;</string>
     <string name="dateformat">yyyy-MM-dd - HH:mm</string>
     <string name="take_picture_description">Take a new picture in this album.</string>
+    <string name="picture_count">pictures</string>
 
 </resources>
