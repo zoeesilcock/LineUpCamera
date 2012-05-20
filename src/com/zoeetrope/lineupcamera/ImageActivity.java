@@ -1,26 +1,37 @@
 package com.zoeetrope.lineupcamera;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.FloatMath;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Gallery;
+import android.widget.ImageSwitcher;
 import android.widget.ImageView;
+import android.widget.ViewSwitcher.ViewFactory;
 
 import com.zoeetrope.lineupcamera.model.Album;
 
-public class ImageActivity extends Activity implements OnTouchListener {
+public class ImageActivity extends Activity implements OnTouchListener,
+		ViewFactory {
 
 	private ImageView mImageView;
+	private ImageSwitcher mSwitcher;
+	private Gallery mGallery;
 	private Album mAlbum;
 	private int mPosition;
 	private Bitmap mBitmap;
@@ -46,16 +57,39 @@ public class ImageActivity extends Activity implements OnTouchListener {
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		setContentView(R.layout.image);
-		mImageView = (ImageView) findViewById(R.id.image);
-		mImageView.setOnTouchListener(this);
 
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			mAlbum = new Album(extras.getString("ALBUM"));
 			mPosition = extras.getInt("POSITION");
-			loadImage();
-			resetMatrix();
+
+			mSwitcher = (ImageSwitcher) findViewById(R.id.switcher);
+			mSwitcher.setFactory(this);
+
+			mGallery = (Gallery) findViewById(R.id.gallery);
+			mGallery.setAdapter(new ImageGalleryAdapter(this,
+					R.layout.image_gallery_item, mAlbum));
+			mGallery.setSelection(mPosition);
+
+			mGallery.setOnItemClickListener(new OnItemClickListener() {
+				public void onItemClick(AdapterView parent, View v,
+						int position, long id) {
+					mPosition = position;
+					loadImage();
+				}
+			});
 		}
+	}
+
+	@Override
+	public View makeView() {
+		LayoutInflater inflater = (LayoutInflater) this
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		ImageView imageView = (ImageView) inflater.inflate(R.layout.image_view,
+				null, false);
+		mImageView.setOnTouchListener(this);
+
+		return imageView;
 	}
 
 	private void loadImage() {
@@ -63,7 +97,11 @@ public class ImageActivity extends Activity implements OnTouchListener {
 		int bitmapHeight = Math.min(display.getHeight(), display.getWidth());
 		mBitmap = mAlbum.getImages().get(mPosition).getBitmap(bitmapHeight);
 
-		mImageView.setImageBitmap(mBitmap);
+		mSwitcher.setImageDrawable(new BitmapDrawable(getResources(), mBitmap));
+
+		ImageView imageView = (ImageView) mSwitcher.getCurrentView();
+		imageView.setImageMatrix(mMatrix);
+		mImageView = imageView;
 	}
 
 	@Override
@@ -247,4 +285,5 @@ public class ImageActivity extends Activity implements OnTouchListener {
 		float y = event.getY(0) + event.getY(1);
 		point.set(((int) x / 2), ((int) y / 2));
 	}
+
 }

@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.zoeetrope.lineupcamera.model.Album;
 import com.zoeetrope.lineupcamera.model.Image;
 
-public class ImageAdapter extends BaseAdapter {
+public class ImageListAdapter extends BaseAdapter {
 
 	private static int COLUMN_WIDTH_DP = 150;
 
@@ -27,7 +27,7 @@ public class ImageAdapter extends BaseAdapter {
 	private Context mContext;
 	private int mLayout;
 
-	public ImageAdapter(Context context, int itemViewResourceId, Album album) {
+	public ImageListAdapter(Context context, int itemViewResourceId, Album album) {
 		this.mContext = context;
 		this.mAlbum = album;
 		this.mLayout = itemViewResourceId;

@@ -24,7 +24,7 @@ public class ImageListActivity extends SherlockActivity {
 
 	private Album mAlbum;
 	private GridView mGridview;
-	private ImageAdapter mAdapter;
+	private ImageListAdapter mAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +38,8 @@ public class ImageListActivity extends SherlockActivity {
 
 		if (extras != null) {
 			mAlbum = new Album(extras.getString("ALBUM"));
-			mAdapter = new ImageAdapter(this, R.layout.image_list_item, mAlbum);
+			mAdapter = new ImageListAdapter(this, R.layout.image_list_item,
+					mAlbum);
 
 			bar.setTitle((CharSequence) mAlbum.getName());
 			bar.setSubtitle(mAlbum.getImages().size() + " "
