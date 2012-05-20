@@ -57,10 +57,10 @@ public class AlbumListActivity extends SherlockListActivity {
 
 		builder = new AlertDialog.Builder(context);
 		builder.setView(layout);
-		builder.setTitle(R.string.ablum_name_dialog_title);
 
 		switch (id) {
 		case DIALOG_NEW_ALBUM_ID:
+			builder.setTitle(R.string.new_album_dialog_title);
 			builder.setPositiveButton(R.string.ok_button,
 					new OnClickListener() {
 						@Override
@@ -89,6 +89,7 @@ public class AlbumListActivity extends SherlockListActivity {
 			nameField.setText(albumName);
 			nameField.setSelection(albumName.length());
 
+			builder.setTitle(R.string.rename_album_dialog_title);
 			builder.setPositiveButton(R.string.ok_button,
 					new OnClickListener() {
 						@Override

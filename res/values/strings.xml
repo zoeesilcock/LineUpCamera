@@ -6,7 +6,8 @@
     <string name="new_image_button">Take picture</string>
     <string name="cancel_button">Cancel</string>
     <string name="ok_button">OK</string>
-    <string name="ablum_name_dialog_title">New album</string>
+    <string name="new_album_dialog_title">New album</string>
+    <string name="rename_album_dialog_title">Rename album</string>
     <string name="thumbnail_description">Preview</string>
     <string name="context_remove">Remove</string>
     <string name="context_rename">Rename</string>
