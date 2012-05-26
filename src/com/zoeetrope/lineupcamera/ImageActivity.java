@@ -87,7 +87,7 @@ public class ImageActivity extends Activity implements OnTouchListener,
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		ImageView imageView = (ImageView) inflater.inflate(R.layout.image_view,
 				null, false);
-		mImageView.setOnTouchListener(this);
+		imageView.setOnTouchListener(this);
 
 		return imageView;
 	}
