@@ -2,13 +2,16 @@ package com.zoeetrope.lineupcamera;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.hardware.Camera;
+import android.hardware.Camera.CameraInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.Window;
@@ -29,6 +32,7 @@ public class LineUpCameraActivity extends Activity {
 	private ImageButton mSwitchCamera;
 	private GestureDetector mGestureDetector;
 	private Bundle mExtras;
+	public OrientationEventListener mOrientationListener;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -121,6 +125,10 @@ public class LineUpCameraActivity extends Activity {
 				camera = Camera.open();
 			}
 
+			mOrientationListener = new MyOrientationListener(
+					LineUpCameraActivity.this);
+			mOrientationListener.enable();
+
 			return camera;
 		}
 
@@ -152,6 +160,8 @@ public class LineUpCameraActivity extends Activity {
 			mPreview.setCamera(null);
 			mCamera.release();
 			mCamera = null;
+
+			mOrientationListener.disable();
 		}
 	}
 
@@ -180,6 +190,33 @@ public class LineUpCameraActivity extends Activity {
 		case LinearLayout.VISIBLE:
 			mControls.setVisibility(LinearLayout.INVISIBLE);
 			break;
+		}
+	}
+
+	private class MyOrientationListener extends OrientationEventListener {
+
+		public MyOrientationListener(Context context) {
+			super(context);
+		}
+
+		@Override
+		public void onOrientationChanged(int orientation) {
+			if (orientation != ORIENTATION_UNKNOWN && mCamera != null) {
+				CameraInfo info = new CameraInfo();
+				android.hardware.Camera.getCameraInfo(mCurrentCameraId, info);
+				int rotation = 0;
+				orientation = (orientation + 45) / 90 * 90;
+
+				if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
+					rotation = (info.orientation - orientation + 360) % 360;
+				} else {
+					rotation = (info.orientation + orientation) % 360;
+				}
+
+				Camera.Parameters parameters = mCamera.getParameters();
+				parameters.setRotation(rotation);
+				mCamera.setParameters(parameters);
+			}
 		}
 	}
 
