@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -13,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -40,22 +41,29 @@ public class ImageListAdapter extends BaseAdapter {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(mLayout, parent, false);
 		TextView albumDate = (TextView) rowView.findViewById(R.id.imageDate);
+		ImageView imageView = (ImageView) rowView.findViewById(R.id.thumbnail);
 		LinearLayout gridItem = (LinearLayout) rowView
 				.findViewById(R.id.gridItem);
 
 		// Load the thumbnail.
 		Image image = mAlbum.getImages().get(position);
 		Bitmap bitmap = image.getThumbnail();
-		Drawable thumbnail = new BitmapDrawable(mContext.getResources(), bitmap);
+		BitmapDrawable thumbnail = new BitmapDrawable(mContext.getResources(),
+				bitmap);
 
 		// Calculate the height of the cell and apply it.
+		LayoutParams params = (LayoutParams) gridItem.getLayoutParams();
 		DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+
 		int cellWidth = Math.round(TypedValue.applyDimension(
 				TypedValue.COMPLEX_UNIT_DIP, COLUMN_WIDTH_DP, metrics));
-		int cellHeight = Math.round(cellWidth / image.getAspectRatio());
-		LayoutParams params = (LayoutParams) gridItem.getLayoutParams();
 
-		params.height = cellHeight;
+		if (bitmap.getWidth() > bitmap.getHeight()) {
+			params.height = Math.round(cellWidth / image.getAspectRatio());
+		} else {
+			params.height = Math.round(cellWidth * image.getAspectRatio());
+			imageView.setScaleType(ScaleType.FIT_CENTER);
+		}
 
 		// Format the date.
 		String dateFormat = mContext.getResources().getString(
@@ -64,7 +72,7 @@ public class ImageListAdapter extends BaseAdapter {
 		String date = df.format(image.getModifiedDate());
 
 		albumDate.setText(date);
-		gridItem.setBackgroundDrawable(thumbnail);
+		imageView.setImageDrawable(thumbnail);
 
 		return rowView;
 	}
