@@ -76,6 +76,14 @@ public class ImageListActivity extends SherlockActivity {
 	}
 
 	@Override
+	protected void onResume() {
+		super.onResume();
+
+		mAlbum.loadImages();
+		mGridview.invalidateViews();
+	}
+
+	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);

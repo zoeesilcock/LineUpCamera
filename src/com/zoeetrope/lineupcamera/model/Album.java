@@ -117,7 +117,7 @@ public class Album {
 		return mediaFile;
 	}
 
-	private void loadImages() {
+	public void loadImages() {
 		File mediaStorageDir = new File(
 				Environment
 						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
