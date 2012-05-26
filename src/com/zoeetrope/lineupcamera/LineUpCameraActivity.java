@@ -205,6 +205,8 @@ public class LineUpCameraActivity extends Activity {
 				CameraInfo info = new CameraInfo();
 				android.hardware.Camera.getCameraInfo(mCurrentCameraId, info);
 				int rotation = 0;
+				int deviceOrientation = orientation;
+
 				orientation = (orientation + 45) / 90 * 90;
 
 				if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
@@ -216,6 +218,21 @@ public class LineUpCameraActivity extends Activity {
 				Camera.Parameters parameters = mCamera.getParameters();
 				parameters.setRotation(rotation);
 				mCamera.setParameters(parameters);
+
+				// Calculate the rotation of the switch camera button.
+				switch (orientation) {
+				case 0:
+				case 180:
+				case 360:
+					deviceOrientation -= 90;
+					break;
+				case 90:
+				case 270:
+					deviceOrientation += 90;
+					break;
+				}
+
+				mSwitchCamera.setRotation(deviceOrientation);
 			}
 		}
 	}
