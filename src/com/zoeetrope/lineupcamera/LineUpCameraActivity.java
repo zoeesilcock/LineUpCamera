@@ -205,7 +205,6 @@ public class LineUpCameraActivity extends Activity {
 				CameraInfo info = new CameraInfo();
 				android.hardware.Camera.getCameraInfo(mCurrentCameraId, info);
 				int rotation = 0;
-				int deviceOrientation = orientation;
 
 				orientation = (orientation + 45) / 90 * 90;
 
@@ -224,15 +223,18 @@ public class LineUpCameraActivity extends Activity {
 				case 0:
 				case 180:
 				case 360:
-					deviceOrientation -= 90;
+					orientation -= 90;
 					break;
 				case 90:
 				case 270:
-					deviceOrientation += 90;
+					orientation += 90;
 					break;
 				}
 
-				mSwitchCamera.setRotation(deviceOrientation);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
+						&& Camera.getNumberOfCameras() > 1) {
+					mSwitchCamera.setRotation(orientation);
+				}
 			}
 		}
 	}
