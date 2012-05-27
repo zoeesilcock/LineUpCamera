@@ -105,20 +105,22 @@ public class CameraPreview extends SurfaceView implements Callback,
 
 		try {
 			Camera.Parameters parameters = mCamera.getParameters();
-			List<Camera.Size> sizes = parameters.getSupportedPictureSizes();
+			Camera.Size thumbnailSize = getOptimalThumbnailSize(parameters);
+			Camera.Size previewSize = getOptimalPreviewSize(parameters);
+			Camera.Size pictureSize = getOptimalPictureSize(parameters);
 
-			Camera.Size cs = sizes.get(0);
-			parameters.setPictureSize(cs.width, cs.height);
+			parameters.setPictureSize(pictureSize.width, pictureSize.height);
+			parameters.setJpegQuality(95);
 
-			sizes = parameters.getSupportedPreviewSizes();
-			cs = getOptimalPreviewSize(sizes);
+			parameters.setJpegThumbnailSize(thumbnailSize.width,
+					thumbnailSize.height);
+			parameters.setJpegThumbnailQuality(80);
 
 			setDisplayOrientation(mCamera, 0);
-			setLayoutParams(new FrameLayout.LayoutParams(cs.width, cs.height));
-			parameters.setPreviewSize(cs.width, cs.height);
-			mOverlay.setSize(cs.width, cs.height);
-
-			parameters.setJpegQuality(90);
+			setLayoutParams(new FrameLayout.LayoutParams(previewSize.width,
+					previewSize.height));
+			parameters.setPreviewSize(previewSize.width, previewSize.height);
+			mOverlay.setSize(previewSize.width, previewSize.height);
 
 			mCamera.setPreviewDisplay(mHolder);
 			mCamera.setParameters(parameters);
@@ -130,7 +132,21 @@ public class CameraPreview extends SurfaceView implements Callback,
 		}
 	}
 
-	private Size getOptimalPreviewSize(List<Size> previewSizes) {
+	private Camera.Size getOptimalPictureSize(Camera.Parameters parameters) {
+		List<Size> pictureSizes = parameters.getSupportedPictureSizes();
+
+		Collections.sort(pictureSizes, new Comparator<Camera.Size>() {
+			@Override
+			public int compare(Size lhs, Size rhs) {
+				return rhs.height - lhs.height;
+			}
+		});
+
+		return pictureSizes.get(0);
+	}
+
+	private Camera.Size getOptimalPreviewSize(Camera.Parameters parameters) {
+		List<Size> previewSizes = parameters.getSupportedPreviewSizes();
 		Camera.Size optimalSize = null;
 
 		Collections.sort(previewSizes, new Comparator<Camera.Size>() {
@@ -141,11 +157,34 @@ public class CameraPreview extends SurfaceView implements Callback,
 		});
 
 		Iterator<Size> iterator = previewSizes.iterator();
-		Log.d(TAG, "my height: " + getHeight());
 		while (iterator.hasNext()) {
 			Camera.Size cs = iterator.next();
 
 			if (cs.height <= getHeight()) {
+				optimalSize = cs;
+				break;
+			}
+		}
+
+		return optimalSize;
+	}
+
+	private Camera.Size getOptimalThumbnailSize(Camera.Parameters parameters) {
+		List<Size> thumbnailSizes = parameters.getSupportedJpegThumbnailSizes();
+		Camera.Size optimalSize = null;
+
+		Collections.sort(thumbnailSizes, new Comparator<Camera.Size>() {
+			@Override
+			public int compare(Size lhs, Size rhs) {
+				return lhs.width - rhs.width;
+			}
+		});
+
+		Iterator<Size> iterator = thumbnailSizes.iterator();
+		while (iterator.hasNext()) {
+			Camera.Size cs = iterator.next();
+
+			if (cs.width >= 300) {
 				optimalSize = cs;
 				break;
 			}
