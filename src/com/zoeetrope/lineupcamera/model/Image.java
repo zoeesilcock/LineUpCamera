@@ -36,26 +36,34 @@ public class Image {
 
 	public float getAspectRatio() {
 		Bitmap image = getThumbnail();
+		float aspectRatio = 0;
 
-		return (float) image.getWidth() / (float) image.getHeight();
+		if (image != null) {
+			aspectRatio = (float) image.getWidth() / (float) image.getHeight();
+		}
+
+		return aspectRatio;
 	}
 
 	public Bitmap getThumbnail() {
 		ExifInterface exif;
+		Bitmap bitmap = null;
+
 		try {
 			exif = new ExifInterface(mFile.getPath());
 			byte[] thumbnail = exif.getThumbnail();
 
-			ByteArrayInputStream stream = new ByteArrayInputStream(thumbnail);
-			Bitmap bitmap = BitmapFactory.decodeStream(stream, null, null);
-			stream.close();
-
-			return bitmap;
+			if (thumbnail != null) {
+				ByteArrayInputStream stream = new ByteArrayInputStream(
+						thumbnail);
+				bitmap = BitmapFactory.decodeStream(stream, null, null);
+				stream.close();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		return null;
+		return bitmap;
 	}
 
 	public Bitmap getBitmap(int requiredHeight) {

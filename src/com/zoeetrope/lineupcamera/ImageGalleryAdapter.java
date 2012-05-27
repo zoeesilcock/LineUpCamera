@@ -37,8 +37,12 @@ public class ImageGalleryAdapter extends BaseAdapter {
 		// Load the thumbnail.
 		Image image = mAlbum.getImages().get(position);
 		Bitmap bitmap = image.getThumbnail();
-		Drawable thumbnail = new BitmapDrawable(mContext.getResources(), bitmap);
-		imageView.setImageDrawable(thumbnail);
+
+		if (bitmap != null) {
+			Drawable thumbnail = new BitmapDrawable(mContext.getResources(),
+					bitmap);
+			imageView.setImageDrawable(thumbnail);
+		}
 
 		return itemView;
 	}

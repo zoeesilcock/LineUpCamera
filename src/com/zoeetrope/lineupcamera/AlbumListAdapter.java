@@ -8,6 +8,7 @@ import java.util.List;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -54,17 +55,22 @@ public class AlbumListAdapter extends ArrayAdapter<Album> {
 		Image image = album.getLatestImage();
 
 		if (image != null) {
-			BitmapDrawable thumbnail = new BitmapDrawable(
-					mContext.getResources(), image.getThumbnail());
 			String dateFormat = mContext.getResources().getString(
 					R.string.dateformat);
 			Date modificationDate = image.getModifiedDate();
 			SimpleDateFormat df = new SimpleDateFormat(dateFormat);
+			Bitmap bitmap = image.getThumbnail();
 
-			thumbnail.setBounds(new Rect(0, 0, Math.round(THUMBNAIL_HEIGHT
-					* image.getAspectRatio()), THUMBNAIL_HEIGHT));
+			if (bitmap != null) {
+				BitmapDrawable thumbnail = new BitmapDrawable(
+						mContext.getResources(), image.getThumbnail());
 
-			thumbnailView.setImageDrawable(thumbnail);
+				thumbnail.setBounds(new Rect(0, 0, Math.round(THUMBNAIL_HEIGHT
+						* image.getAspectRatio()), THUMBNAIL_HEIGHT));
+
+				thumbnailView.setImageDrawable(thumbnail);
+			}
+
 			albumDate.setText(df.format(modificationDate));
 		}
 

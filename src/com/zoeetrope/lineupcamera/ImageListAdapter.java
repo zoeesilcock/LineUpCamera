@@ -48,21 +48,27 @@ public class ImageListAdapter extends BaseAdapter {
 		// Load the thumbnail.
 		Image image = mAlbum.getImages().get(position);
 		Bitmap bitmap = image.getThumbnail();
-		BitmapDrawable thumbnail = new BitmapDrawable(mContext.getResources(),
-				bitmap);
 
-		// Calculate the height of the cell and apply it.
-		LayoutParams params = (LayoutParams) gridItem.getLayoutParams();
-		DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+		if (bitmap != null) {
+			BitmapDrawable thumbnail = new BitmapDrawable(
+					mContext.getResources(), bitmap);
 
-		int cellWidth = Math.round(TypedValue.applyDimension(
-				TypedValue.COMPLEX_UNIT_DIP, COLUMN_WIDTH_DP, metrics));
+			// Calculate the height of the cell and apply it.
+			LayoutParams params = (LayoutParams) gridItem.getLayoutParams();
+			DisplayMetrics metrics = mContext.getResources()
+					.getDisplayMetrics();
 
-		if (bitmap.getWidth() > bitmap.getHeight()) {
-			params.height = Math.round(cellWidth / image.getAspectRatio());
-		} else {
-			params.height = Math.round(cellWidth * image.getAspectRatio());
-			imageView.setScaleType(ScaleType.FIT_CENTER);
+			int cellWidth = Math.round(TypedValue.applyDimension(
+					TypedValue.COMPLEX_UNIT_DIP, COLUMN_WIDTH_DP, metrics));
+
+			if (bitmap.getWidth() > bitmap.getHeight()) {
+				params.height = Math.round(cellWidth / image.getAspectRatio());
+			} else {
+				params.height = Math.round(cellWidth * image.getAspectRatio());
+				imageView.setScaleType(ScaleType.FIT_CENTER);
+			}
+
+			imageView.setImageDrawable(thumbnail);
 		}
 
 		// Format the date.
@@ -72,7 +78,6 @@ public class ImageListAdapter extends BaseAdapter {
 		String date = df.format(image.getModifiedDate());
 
 		albumDate.setText(date);
-		imageView.setImageDrawable(thumbnail);
 
 		return rowView;
 	}

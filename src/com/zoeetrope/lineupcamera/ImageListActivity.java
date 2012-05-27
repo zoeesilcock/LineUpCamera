@@ -2,6 +2,7 @@ package com.zoeetrope.lineupcamera;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -50,8 +51,11 @@ public class ImageListActivity extends SherlockActivity {
 			Image latestImage = mAlbum.getLatestImage();
 
 			if (latestImage != null) {
-				bar.setIcon(new BitmapDrawable(getResources(), latestImage
-						.getThumbnail()));
+				Bitmap bitmap = latestImage.getThumbnail();
+
+				if (bitmap != null) {
+					bar.setIcon(new BitmapDrawable(getResources(), bitmap));
+				}
 			}
 
 			mGridview.setAdapter(mAdapter);
