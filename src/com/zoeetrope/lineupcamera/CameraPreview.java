@@ -1,6 +1,5 @@
 package com.zoeetrope.lineupcamera;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,6 +32,7 @@ public class CameraPreview extends SurfaceView implements Callback,
 	private SurfaceHolder mHolder;
 	private CameraOverlay mOverlay;
 	private Album mAlbum;
+	private boolean mPreviewRunning;
 
 	public CameraPreview(Context context) {
 		super(context);
@@ -52,21 +52,16 @@ public class CameraPreview extends SurfaceView implements Callback,
 		initialize();
 	}
 
-	@SuppressWarnings("deprecation")
 	private void initialize() {
-		mHolder = getHolder();
-		mHolder.addCallback(this);
-		mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-
 		mAlbum = new Album("");
 
+		setupSurface(getHolder());
 		this.setOnClickListener(this);
 	}
 
 	public void setCamera(Camera camera) {
 		this.mCamera = camera;
-		setupCameraPreview();
-		requestLayout();
+		startCameraPreview();
 	}
 
 	public void setOverlay(CameraOverlay overlay) {
@@ -75,14 +70,13 @@ public class CameraPreview extends SurfaceView implements Callback,
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		if (mCamera != null) {
-			try {
-				mCamera.setPreviewDisplay(holder);
-				mCamera.startPreview();
+		if (holder.getSurface() != null) {
+			setupSurface(holder);
+
+			if (mCamera != null) {
+				startCameraPreview();
 
 				requestLayout();
-			} catch (IOException e) {
-				Log.d(TAG, "Error setting camera preview: " + e.getMessage());
 			}
 		}
 	}
@@ -90,19 +84,26 @@ public class CameraPreview extends SurfaceView implements Callback,
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
-		if (mHolder.getSurface() == null) {
-			return;
-		}
+		setupSurface(holder);
 
-		setupCameraPreview();
+		if (mHolder.getSurface() != null && mCamera != null) {
+			startCameraPreview();
+		}
 	}
 
-	private void setupCameraPreview() {
-		try {
-			mCamera.stopPreview();
-		} catch (Exception e) {
-		}
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		stopCameraPreview();
+		mHolder = null;
+	}
 
+	private void setupSurface(SurfaceHolder holder) {
+		mHolder = holder;
+		mHolder.addCallback(this);
+		mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+	}
+
+	private void startCameraPreview() {
 		try {
 			Camera.Parameters parameters = mCamera.getParameters();
 			Camera.Size thumbnailSize = getOptimalThumbnailSize(parameters);
@@ -125,10 +126,20 @@ public class CameraPreview extends SurfaceView implements Callback,
 			mCamera.setPreviewDisplay(mHolder);
 			mCamera.setParameters(parameters);
 			mCamera.startPreview();
+			mPreviewRunning = true;
 
 			new LoadImageTask().execute();
 		} catch (Exception e) {
-			Log.d(TAG, "Error starting camera preview: " + e.getMessage());
+			e.printStackTrace();
+			Log.d(TAG, "Error starting camera preview: " + e.getMessage() + " "
+					+ e.getClass().toString());
+		}
+	}
+
+	private void stopCameraPreview() {
+		if (mCamera != null && mPreviewRunning) {
+			mCamera.stopPreview();
+			mPreviewRunning = false;
 		}
 	}
 
@@ -202,11 +213,6 @@ public class CameraPreview extends SurfaceView implements Callback,
 				downPolymorphic.invoke(camera, new Object[] { angle });
 		} catch (Exception e1) {
 		}
-	}
-
-	@Override
-	public void surfaceDestroyed(SurfaceHolder arg0) {
-
 	}
 
 	@Override
