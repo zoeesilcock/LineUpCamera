@@ -113,7 +113,19 @@ public class Image {
 		return resizedBitmap;
 	}
 
+	public int getOrientation() {
+		int orientation = 0;
+		Bitmap image = getBitmap(100);
+
+		if (image.getHeight() > image.getWidth()) {
+			orientation = -90;
+		}
+
+		return orientation;
+	}
+
 	public void remove() {
 		mFile.delete();
 	}
+
 }

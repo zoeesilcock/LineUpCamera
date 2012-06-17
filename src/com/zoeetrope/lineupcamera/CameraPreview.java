@@ -241,13 +241,21 @@ public class CameraPreview extends SurfaceView implements Callback,
 
 	private class LoadImageTask extends AsyncTask<Void, Integer, Bitmap> {
 
+		private Image latestImage = mAlbum.getLatestImage();
+		private int mOrientation;
+
 		@Override
 		protected Bitmap doInBackground(Void... params) {
-			Image latestImage = mAlbum.getLatestImage();
-
 			if (latestImage != null) {
-				return latestImage.getResizedBitmap(mOverlay.getWidth(),
-						mOverlay.getHeight());
+				mOrientation = latestImage.getOrientation();
+
+				if (mOrientation != 0) {
+					return latestImage.getResizedBitmap(mOverlay.getHeight(),
+							mOverlay.getWidth());
+				} else {
+					return latestImage.getResizedBitmap(mOverlay.getWidth(),
+							mOverlay.getHeight());
+				}
 			}
 
 			return null;
@@ -256,11 +264,10 @@ public class CameraPreview extends SurfaceView implements Callback,
 		@Override
 		protected void onPostExecute(Bitmap result) {
 			if (result != null) {
-				mOverlay.setImage(result);
+				mOverlay.setImage(result, mOrientation);
 				requestLayout();
 			}
 		}
-
 	};
 
 }

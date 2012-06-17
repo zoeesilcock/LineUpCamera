@@ -3,18 +3,17 @@ package com.zoeetrope.lineupcamera;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
 public class CameraOverlay extends View {
 
-	private final String TAG = "CameraOverlay";
 	private Bitmap mImage;
 	private int mOpacity = 100;
+	private int mOrientation;
 
 	public CameraOverlay(Context context) {
 		super(context);
@@ -28,21 +27,29 @@ public class CameraOverlay extends View {
 		super(context, attributes, defStyle);
 	}
 
-	protected void onDraw(Canvas c) {
+	protected void onDraw(Canvas canvas) {
 		if (mImage != null) {
-			Rect dest = new Rect(0, 0, getWidth(), getHeight());
+			Matrix matrix = new Matrix();
 			Paint paint = new Paint();
+
 			paint.setFilterBitmap(true);
 			paint.setAlpha(mOpacity);
-			Log.d(TAG, "Width: " + getWidth() + " Height: " + getHeight());
-			c.drawBitmap(mImage, null, dest, paint);
 
-			super.onDraw(c);
+			canvas.save();
+			if (mOrientation != 0) {
+				matrix.setTranslate(-(mImage.getWidth()), 0);
+				matrix.postRotate(mOrientation, 0, 0);
+			}
+			canvas.drawBitmap(mImage, matrix, paint);
+			canvas.restore();
+
+			super.onDraw(canvas);
 		}
 	}
 
-	public void setImage(Bitmap image) {
+	public void setImage(Bitmap image, int orientation) {
 		mImage = image;
+		mOrientation = orientation;
 		invalidate();
 	}
 
