@@ -19,7 +19,8 @@
         android:id="@+id/controls"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:layout_gravity="bottom" >
+        android:layout_gravity="bottom"
+        android:clickable="true" >
 
         <SeekBar
             android:id="@+id/overlayOpacity"
