@@ -1,6 +1,8 @@
 package com.zoeetrope.lineupcamera;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -102,9 +104,33 @@ public class ImageListActivity extends SherlockActivity {
 				.getMenuInfo();
 
 		if (item.getItemId() == R.id.remove) {
-			mAlbum.remove(info.position);
-			mAdapter.notifyDataSetChanged();
-			mGridview.invalidateViews();
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			final int imageIndex = info.position;
+
+			builder.setMessage(R.string.confirm_delete_image_message);
+			builder.setPositiveButton(R.string.confirm_delete_yes,
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							mAlbum.remove(imageIndex);
+							mAdapter.notifyDataSetChanged();
+							mGridview.invalidateViews();
+						}
+
+					});
+			builder.setNegativeButton(R.string.confirm_delete_no,
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.cancel();
+						}
+
+					});
+
+			AlertDialog alertDialog = builder.create();
+			alertDialog.show();
 			return true;
 		} else {
 			return super.onContextItemSelected(item);

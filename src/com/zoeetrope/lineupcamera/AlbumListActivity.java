@@ -32,6 +32,7 @@ public class AlbumListActivity extends SherlockListActivity {
 
 	static final int DIALOG_NEW_ALBUM_ID = 0;
 	static final int DIALOG_RENAME_ALBUM_ID = 1;
+	static final int DIALOG_DELETE_ALBUM_ID = 2;
 
 	private ArrayList<Album> mAlbums;
 	private AlbumListAdapter mAdapter;
@@ -54,12 +55,13 @@ public class AlbumListActivity extends SherlockListActivity {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(LAYOUT_INFLATER_SERVICE);
 		final View layout = inflater.inflate(R.layout.album_name_dialog, null);
+		final int albumIndex = bundle.getInt("ALBUM_INDEX");
 
 		builder = new AlertDialog.Builder(context);
-		builder.setView(layout);
 
 		switch (id) {
 		case DIALOG_NEW_ALBUM_ID:
+			builder.setView(layout);
 			builder.setTitle(R.string.new_album_dialog_title);
 			builder.setPositiveButton(R.string.ok_button,
 					new OnClickListener() {
@@ -82,13 +84,13 @@ public class AlbumListActivity extends SherlockListActivity {
 					});
 			break;
 		case DIALOG_RENAME_ALBUM_ID:
-			final int albumIndex = bundle.getInt("ALBUM_INDEX");
 			EditText nameField = (EditText) layout.findViewById(R.id.albumName);
 			String albumName = mAlbums.get(albumIndex).getName();
 
 			nameField.setText(albumName);
 			nameField.setSelection(albumName.length());
 
+			builder.setView(layout);
 			builder.setTitle(R.string.rename_album_dialog_title);
 			builder.setPositiveButton(R.string.ok_button,
 					new OnClickListener() {
@@ -100,6 +102,30 @@ public class AlbumListActivity extends SherlockListActivity {
 
 							album.renameAlbum(name.getText().toString());
 						}
+					});
+			break;
+		case DIALOG_DELETE_ALBUM_ID:
+			builder.setMessage(R.string.confirm_delete_album_message);
+			builder.setPositiveButton(R.string.confirm_delete_yes,
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							mAlbums.get(albumIndex).removeAlbum();
+							mAlbums.remove(albumIndex);
+							mAdapter.notifyDataSetChanged();
+							getListView().invalidateViews();
+						}
+
+					});
+			builder.setNegativeButton(R.string.confirm_delete_no,
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.cancel();
+						}
+
 					});
 			break;
 		}
@@ -171,10 +197,9 @@ public class AlbumListActivity extends SherlockListActivity {
 				.getMenuInfo();
 
 		if (item.getItemId() == R.id.remove) {
-			mAlbums.get(info.position).removeAlbum();
-			mAlbums.remove(info.position);
-			mAdapter.notifyDataSetChanged();
-			getListView().invalidateViews();
+			Bundle bundle = new Bundle();
+			bundle.putInt("ALBUM_INDEX", info.position);
+			AlbumListActivity.this.showDialog(DIALOG_DELETE_ALBUM_ID, bundle);
 			return true;
 		} else if (item.getItemId() == R.id.rename) {
 			Bundle bundle = new Bundle();
@@ -196,7 +221,7 @@ public class AlbumListActivity extends SherlockListActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.newAlbum) {
-			this.showDialog(DIALOG_NEW_ALBUM_ID);
+			this.showDialog(DIALOG_NEW_ALBUM_ID, new Bundle());
 			return true;
 		}
 
