@@ -9,11 +9,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -30,7 +27,6 @@ public class LineUpCameraActivity extends Activity {
 	private LinearLayout mControls;
 	private SeekBar mOverlayOpacity;
 	private ImageButton mSwitchCamera;
-	private GestureDetector mGestureDetector;
 	private Bundle mExtras;
 	public OrientationEventListener mOrientationListener;
 
@@ -55,17 +51,6 @@ public class LineUpCameraActivity extends Activity {
 		if (mExtras != null) {
 			mPreview.setAlbumName(mExtras.getString("ALBUM"));
 		}
-
-		mGestureDetector = new GestureDetector(this, new CameraGestureListener(
-				this));
-
-		OnTouchListener gestureListener = new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				return mGestureDetector.onTouchEvent(event);
-			}
-		};
-
-		mPreview.setOnTouchListener(gestureListener);
 
 		mOverlayOpacity.setProgress(100);
 		mOverlayOpacity.setOnSeekBarChangeListener(mOpacityListener);
