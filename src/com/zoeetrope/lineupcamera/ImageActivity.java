@@ -139,28 +139,6 @@ public class ImageActivity extends Activity implements OnTouchListener,
 		case MotionEvent.ACTION_MOVE:
 			if (!mSwipeReset) {
 				float newDistance = 0;
-				float swipeDistanceX = event.getX(0) - mPrevious.x;
-				float swipeDistanceY = event.getY(0) - mPrevious.y;
-
-				if ((swipeDistanceX > 100 && (swipeDistanceY < 50 && swipeDistanceY > -50))
-						|| (swipeDistanceX < -100 && (swipeDistanceY < 50 && swipeDistanceY > -50))) {
-					float totalDistanceX = event.getX(0) - mStart.x
-							- swipeDistanceX;
-					float totalDistanceY = event.getY(0) - mStart.y
-							- swipeDistanceY;
-					totalDistanceX *= -1;
-					totalDistanceY *= -1;
-
-					mMatrix.postTranslate(totalDistanceX, totalDistanceY);
-
-					if (swipeDistanceX > 0) {
-						showPreviousImage();
-					} else {
-						showNextImage();
-					}
-					mSwipeReset = true;
-					break;
-				}
 
 				if (mMode == ZOOM) {
 					newDistance = getPointDistance(event);
@@ -234,43 +212,6 @@ public class ImageActivity extends Activity implements OnTouchListener,
 		mImageView.setImageMatrix(mMatrix);
 
 		return true;
-	}
-
-	private void resetMatrix() {
-		Matrix m = mImageView.getImageMatrix();
-		RectF drawableRect = new RectF(0, 0, mBitmap.getWidth(),
-				mBitmap.getHeight());
-		RectF viewRect = new RectF(0, 0, mImageView.getWidth(),
-				mImageView.getHeight());
-
-		m.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.FILL);
-		m.setScale(1, 1);
-
-		mImageView.setImageMatrix(m);
-		mMatrix.set(m);
-		mSavedMatrix.set(m);
-	}
-
-	private void showNextImage() {
-		mPosition += 1;
-
-		if (mPosition >= mAlbum.getImages().size()) {
-			mPosition = 0;
-		}
-
-		mBitmap.recycle();
-		loadImage();
-	}
-
-	private void showPreviousImage() {
-		mPosition -= 1;
-
-		if (mPosition < 0) {
-			mPosition = mAlbum.getImages().size() - 1;
-		}
-
-		mBitmap.recycle();
-		loadImage();
 	}
 
 	private float getPointDistance(MotionEvent event) {
