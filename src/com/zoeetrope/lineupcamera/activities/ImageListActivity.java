@@ -1,4 +1,4 @@
-package com.zoeetrope.lineupcamera;
+package com.zoeetrope.lineupcamera.activities;
 
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -20,6 +20,12 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.zoeetrope.lineupcamera.R;
+import com.zoeetrope.lineupcamera.R.id;
+import com.zoeetrope.lineupcamera.R.layout;
+import com.zoeetrope.lineupcamera.R.menu;
+import com.zoeetrope.lineupcamera.R.string;
+import com.zoeetrope.lineupcamera.lists.ImageListAdapter;
 import com.zoeetrope.lineupcamera.model.Album;
 import com.zoeetrope.lineupcamera.model.Image;
 

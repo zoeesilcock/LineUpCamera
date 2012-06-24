@@ -3,13 +3,13 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <com.zoeetrope.lineupcamera.CameraPreview
+    <com.zoeetrope.lineupcamera.views.CameraPreview
         android:id="@+id/preview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_gravity="center" />
 
-    <com.zoeetrope.lineupcamera.CameraOverlay
+    <com.zoeetrope.lineupcamera.views.CameraOverlay
         android:id="@+id/overlay"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

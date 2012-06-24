@@ -1,4 +1,4 @@
-package com.zoeetrope.lineupcamera;
+package com.zoeetrope.lineupcamera.activities;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,6 +24,10 @@ import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.ViewSwitcher.ViewFactory;
 
+import com.zoeetrope.lineupcamera.R;
+import com.zoeetrope.lineupcamera.R.id;
+import com.zoeetrope.lineupcamera.R.layout;
+import com.zoeetrope.lineupcamera.lists.ImageGalleryAdapter;
 import com.zoeetrope.lineupcamera.model.Album;
 
 public class ImageActivity extends Activity implements OnTouchListener,

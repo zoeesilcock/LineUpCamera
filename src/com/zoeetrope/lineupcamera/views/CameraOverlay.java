@@ -1,4 +1,4 @@
-package com.zoeetrope.lineupcamera;
+package com.zoeetrope.lineupcamera.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;

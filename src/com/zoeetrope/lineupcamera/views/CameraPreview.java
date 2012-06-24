@@ -1,4 +1,4 @@
-package com.zoeetrope.lineupcamera;
+package com.zoeetrope.lineupcamera.views;
 
 import java.lang.reflect.Method;
 import java.util.Collections;

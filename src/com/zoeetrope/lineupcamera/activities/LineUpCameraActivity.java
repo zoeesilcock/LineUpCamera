@@ -1,4 +1,11 @@
-package com.zoeetrope.lineupcamera;
+package com.zoeetrope.lineupcamera.activities;
+
+import com.zoeetrope.lineupcamera.R;
+import com.zoeetrope.lineupcamera.R.id;
+import com.zoeetrope.lineupcamera.R.layout;
+import com.zoeetrope.lineupcamera.R.string;
+import com.zoeetrope.lineupcamera.views.CameraOverlay;
+import com.zoeetrope.lineupcamera.views.CameraPreview;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

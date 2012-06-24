@@ -1,4 +1,4 @@
-package com.zoeetrope.lineupcamera;
+package com.zoeetrope.lineupcamera.lists;
 
 import java.text.SimpleDateFormat;
 
@@ -17,6 +17,9 @@ import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.zoeetrope.lineupcamera.R;
+import com.zoeetrope.lineupcamera.R.id;
+import com.zoeetrope.lineupcamera.R.string;
 import com.zoeetrope.lineupcamera.model.Album;
 import com.zoeetrope.lineupcamera.model.Image;
 

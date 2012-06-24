@@ -1,4 +1,4 @@
-package com.zoeetrope.lineupcamera;
+package com.zoeetrope.lineupcamera.activities;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,6 +26,12 @@ import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.zoeetrope.lineupcamera.R;
+import com.zoeetrope.lineupcamera.R.id;
+import com.zoeetrope.lineupcamera.R.layout;
+import com.zoeetrope.lineupcamera.R.menu;
+import com.zoeetrope.lineupcamera.R.string;
+import com.zoeetrope.lineupcamera.lists.AlbumListAdapter;
 import com.zoeetrope.lineupcamera.model.Album;
 
 public class AlbumListActivity extends SherlockListActivity {
