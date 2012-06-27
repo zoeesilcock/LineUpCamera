@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -27,10 +26,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.zoeetrope.lineupcamera.R;
-import com.zoeetrope.lineupcamera.R.id;
-import com.zoeetrope.lineupcamera.R.layout;
-import com.zoeetrope.lineupcamera.R.menu;
-import com.zoeetrope.lineupcamera.R.string;
 import com.zoeetrope.lineupcamera.lists.AlbumListAdapter;
 import com.zoeetrope.lineupcamera.model.Album;
 
@@ -54,16 +49,15 @@ public class AlbumListActivity extends SherlockListActivity {
 	}
 
 	@Override
-	protected Dialog onCreateDialog(int id, Bundle bundle) {
-		AlertDialog.Builder builder;
+	protected Dialog onCreateDialog(int id, Bundle args) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		AlertDialog alertDialog = null;
-		Context context = AlbumListActivity.this;
-		LayoutInflater inflater = (LayoutInflater) context
+		LayoutInflater inflater = (LayoutInflater) this
 				.getSystemService(LAYOUT_INFLATER_SERVICE);
-		final View layout = inflater.inflate(R.layout.album_name_dialog, null);
-		final int albumIndex = bundle.getInt("ALBUM_INDEX");
-
-		builder = new AlertDialog.Builder(context);
+		View layout = inflater.inflate(R.layout.album_name_dialog, null);
+		final int albumIndex = args.getInt("ALBUM_INDEX");
+		final EditText nameField = (EditText) layout
+				.findViewById(R.id.albumName);
 
 		switch (id) {
 		case DIALOG_NEW_ALBUM_ID:
@@ -78,11 +72,9 @@ public class AlbumListActivity extends SherlockListActivity {
 									AlbumListActivity.this,
 									LineUpCameraActivity.class));
 
-							EditText name = (EditText) layout
-									.findViewById(R.id.albumName);
-
 							Bundle bundle = new Bundle();
-							bundle.putString("ALBUM", name.getText().toString());
+							bundle.putString("ALBUM", nameField.getText()
+									.toString());
 							cameraIntent.putExtras(bundle);
 
 							AlbumListActivity.this.startActivity(cameraIntent);
@@ -90,23 +82,15 @@ public class AlbumListActivity extends SherlockListActivity {
 					});
 			break;
 		case DIALOG_RENAME_ALBUM_ID:
-			EditText nameField = (EditText) layout.findViewById(R.id.albumName);
-			String albumName = mAlbums.get(albumIndex).getName();
-
-			nameField.setText(albumName);
-			nameField.setSelection(albumName.length());
-
 			builder.setView(layout);
 			builder.setTitle(R.string.rename_album_dialog_title);
 			builder.setPositiveButton(R.string.ok_button,
 					new OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							EditText name = (EditText) layout
-									.findViewById(R.id.albumName);
 							Album album = mAlbums.get(albumIndex);
 
-							album.renameAlbum(name.getText().toString());
+							album.renameAlbum(nameField.getText().toString());
 						}
 					});
 			break;
@@ -142,6 +126,27 @@ public class AlbumListActivity extends SherlockListActivity {
 
 		return alertDialog;
 	}
+
+	protected void onPrepareDialog(int id, Dialog dialog, Bundle args) {
+		EditText nameField = (EditText) dialog.findViewById(R.id.albumName);
+		final int albumIndex = args.getInt("ALBUM_INDEX");
+
+		switch (id) {
+		case DIALOG_NEW_ALBUM_ID:
+			String untitled = getString(R.string.untitled_album);
+
+			nameField.setText(untitled);
+			nameField.setSelection(0, untitled.length());
+			break;
+		case DIALOG_RENAME_ALBUM_ID:
+			String albumName = mAlbums.get(albumIndex).getName();
+
+			nameField.setText(albumName);
+			nameField.setSelection(albumName.length());
+			break;
+		}
+
+	};
 
 	@Override
 	protected void onResume() {
