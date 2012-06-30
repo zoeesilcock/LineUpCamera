@@ -1,4 +1,4 @@
-package com.zoeetrope.lineupcamera.model;
+package com.zoeetrope.lineupcamera.models;
 
 import java.io.File;
 import java.util.Date;

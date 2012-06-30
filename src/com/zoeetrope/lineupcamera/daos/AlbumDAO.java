@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import android.os.Environment;
 import android.util.Log;
 
-import com.zoeetrope.lineupcamera.model.Album;
-import com.zoeetrope.lineupcamera.model.Image;
+import com.zoeetrope.lineupcamera.models.Album;
+import com.zoeetrope.lineupcamera.models.Image;
 
 public class AlbumDAO {
 

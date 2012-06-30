@@ -28,7 +28,7 @@ import com.zoeetrope.lineupcamera.R;
 import com.zoeetrope.lineupcamera.R.id;
 import com.zoeetrope.lineupcamera.R.layout;
 import com.zoeetrope.lineupcamera.lists.ImageGalleryAdapter;
-import com.zoeetrope.lineupcamera.model.Album;
+import com.zoeetrope.lineupcamera.models.Album;
 
 public class ImageActivity extends Activity implements OnTouchListener,
 		ViewFactory {

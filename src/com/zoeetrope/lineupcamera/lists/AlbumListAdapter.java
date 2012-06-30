@@ -24,8 +24,8 @@ import com.zoeetrope.lineupcamera.R;
 import com.zoeetrope.lineupcamera.R.id;
 import com.zoeetrope.lineupcamera.R.string;
 import com.zoeetrope.lineupcamera.activities.LineUpCameraActivity;
-import com.zoeetrope.lineupcamera.model.Album;
-import com.zoeetrope.lineupcamera.model.Image;
+import com.zoeetrope.lineupcamera.models.Album;
+import com.zoeetrope.lineupcamera.models.Image;
 
 public class AlbumListAdapter extends ArrayAdapter<Album> {
 

@@ -21,8 +21,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.zoeetrope.lineupcamera.daos.ImageDAO;
-import com.zoeetrope.lineupcamera.model.Album;
-import com.zoeetrope.lineupcamera.model.Image;
+import com.zoeetrope.lineupcamera.models.Album;
+import com.zoeetrope.lineupcamera.models.Image;
 
 public class CameraPreview extends SurfaceView implements Callback,
 		View.OnClickListener {

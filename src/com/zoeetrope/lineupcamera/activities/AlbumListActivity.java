@@ -25,7 +25,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.zoeetrope.lineupcamera.R;
 import com.zoeetrope.lineupcamera.daos.AlbumDAO;
 import com.zoeetrope.lineupcamera.lists.AlbumListAdapter;
-import com.zoeetrope.lineupcamera.model.Album;
+import com.zoeetrope.lineupcamera.models.Album;
 
 public class AlbumListActivity extends SherlockListActivity {
 
