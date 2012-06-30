@@ -1,6 +1,5 @@
 package com.zoeetrope.lineupcamera.activities;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
@@ -10,8 +9,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -26,6 +23,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.zoeetrope.lineupcamera.R;
+import com.zoeetrope.lineupcamera.daos.AlbumDAO;
 import com.zoeetrope.lineupcamera.lists.AlbumListAdapter;
 import com.zoeetrope.lineupcamera.model.Album;
 
@@ -37,11 +35,13 @@ public class AlbumListActivity extends SherlockListActivity {
 
 	private ArrayList<Album> mAlbums;
 	private AlbumListAdapter mAdapter;
+	private AlbumDAO mAlbumDAO;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		mAlbumDAO = new AlbumDAO();
 		setContentView(R.layout.album_list);
 		loadAlbums();
 
@@ -90,7 +90,8 @@ public class AlbumListActivity extends SherlockListActivity {
 						public void onClick(DialogInterface dialog, int which) {
 							Album album = mAlbums.get(albumIndex);
 
-							album.renameAlbum(nameField.getText().toString());
+							mAlbumDAO.rename(album, nameField.getText()
+									.toString());
 						}
 					});
 			break;
@@ -101,8 +102,10 @@ public class AlbumListActivity extends SherlockListActivity {
 
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
-							mAlbums.get(albumIndex).removeAlbum();
+							mAlbumDAO.remove(mAlbums.get(albumIndex));
+
 							mAlbums.remove(albumIndex);
+
 							mAdapter.notifyDataSetChanged();
 							getListView().invalidateViews();
 						}
@@ -171,23 +174,7 @@ public class AlbumListActivity extends SherlockListActivity {
 	}
 
 	private void loadAlbums() {
-		mAlbums = new ArrayList<Album>();
-		File storageFolder = new File(
-				Environment
-						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-				"LineUpCamera");
-
-		if (!storageFolder.exists()) {
-			if (!storageFolder.mkdirs()) {
-				Log.d("LineUpCamera", "failed to create directory");
-			}
-		}
-
-		for (File child : storageFolder.listFiles()) {
-			if (child.isDirectory()) {
-				mAlbums.add(new Album(child.getName()));
-			}
-		}
+		mAlbums = mAlbumDAO.getAll();
 
 		mAdapter = new AlbumListAdapter(this, R.layout.album_list_item, mAlbums);
 		setListAdapter(mAdapter);

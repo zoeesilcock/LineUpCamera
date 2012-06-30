@@ -20,6 +20,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.zoeetrope.lineupcamera.daos.ImageDAO;
 import com.zoeetrope.lineupcamera.model.Album;
 import com.zoeetrope.lineupcamera.model.Image;
 
@@ -97,6 +98,7 @@ public class CameraPreview extends SurfaceView implements Callback,
 		mHolder = null;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void setupSurface(SurfaceHolder holder) {
 		mHolder = holder;
 		mHolder.addCallback(this);
@@ -226,7 +228,8 @@ public class CameraPreview extends SurfaceView implements Callback,
 
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
-			mAlbum.saveNewImage(data);
+			ImageDAO imageDAO = new ImageDAO();
+			imageDAO.create(mAlbum, data);
 
 			new LoadImageTask().execute();
 
