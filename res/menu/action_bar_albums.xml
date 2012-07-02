@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/newAlbum"
+
+    <item
+        android:id="@+id/newAlbum"
         android:icon="@drawable/new_album_icon"
-        android:title="@string/new_album_button"
-        android:showAsAction="always|withText"></item>
+        android:showAsAction="always|withText"
+        android:title="@string/new_album_button">
+    </item>
+
 </menu>

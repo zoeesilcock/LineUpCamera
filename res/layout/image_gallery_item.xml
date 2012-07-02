@@ -3,8 +3,9 @@
     android:id="@+id/thumbnail"
     android:layout_width="70dp"
     android:layout_height="wrap_content"
+    android:background="@drawable/list_selector"
+    android:contentDescription="@string/thumbnail_description"
     android:paddingLeft="5dp"
-    android:paddingRight="5dp"
-    android:background="@drawable/list_selector" >
+    android:paddingRight="5dp" >
 
 </ImageView>

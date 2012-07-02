@@ -35,8 +35,9 @@
             android:id="@+id/switchCamera"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/switch_camera_icon"
-            android:background="@null" />
+            android:background="@null"
+            android:contentDescription="@string/switch_camera_description"
+            android:src="@drawable/switch_camera_icon" />
     </LinearLayout>
 
 </FrameLayout>

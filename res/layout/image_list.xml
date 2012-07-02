@@ -3,12 +3,12 @@
     android:id="@+id/gridview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:numColumns="auto_fit"
     android:columnWidth="150dp"
-    android:verticalSpacing="1dp"
+    android:drawSelectorOnTop="true"
+    android:gravity="center"
     android:horizontalSpacing="1dp"
+    android:listSelector="@drawable/gallery_selector"
+    android:numColumns="auto_fit"
     android:padding="1dp"
     android:stretchMode="columnWidth"
-    android:gravity="center"
-    android:listSelector="@drawable/gallery_selector"
-    android:drawSelectorOnTop="true" />
+    android:verticalSpacing="1dp" />

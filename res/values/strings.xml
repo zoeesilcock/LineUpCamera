@@ -13,12 +13,16 @@
     <string name="confirm_delete_image_message">Are you sure you want to remove the image?</string>
     <string name="confirm_delete_yes">Yes</string>
     <string name="confirm_delete_no">No</string>
-    <string name="thumbnail_description">Preview</string>
     <string name="context_remove">Remove</string>
     <string name="context_rename">Rename</string>
     <string name="starting_camera">Starting camera&#8230;</string>
     <string name="dateformat">yyyy-MM-dd - HH:mm</string>
-    <string name="take_picture_description">Take a new picture in this album.</string>
     <string name="picture_count">pictures</string>
+
+    <!-- Content descriptions -->
+    <string name="take_picture_description">Take a new picture in this album.</string>
+    <string name="switch_camera_description">Switch camera.</string>
+    <string name="thumbnail_description">Preview</string>
+    <string name="image_description">Image</string>
 
 </resources>
