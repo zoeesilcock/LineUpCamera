@@ -24,5 +24,6 @@
     <string name="switch_camera_description">Switch camera.</string>
     <string name="thumbnail_description">Preview</string>
     <string name="image_description">Image</string>
+    <string name="splash_icon_description">Line up camera</string>
 
 </resources>

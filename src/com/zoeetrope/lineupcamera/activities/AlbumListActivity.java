@@ -8,7 +8,9 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -36,6 +38,7 @@ public class AlbumListActivity extends SherlockListActivity {
 	private ArrayList<Album> mAlbums;
 	private AlbumListAdapter mAdapter;
 	private AlbumDAO mAlbumDAO;
+	private Dialog mSplashDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +46,65 @@ public class AlbumListActivity extends SherlockListActivity {
 
 		mAlbumDAO = new AlbumDAO();
 		setContentView(R.layout.album_list);
-		loadAlbums();
-
 		registerForContextMenu(getListView());
+
+		showSplash();
+		loadAlbums();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		loadAlbums();
+	}
+
+	private void loadAlbums() {
+		new LoadAlbumsTask().execute();
+	}
+
+	private class LoadAlbumsTask extends
+			AsyncTask<Void, Integer, ArrayList<Album>> {
+
+		@Override
+		protected ArrayList<Album> doInBackground(Void... params) {
+			return mAlbumDAO.getAll();
+		}
+
+		@Override
+		protected void onPostExecute(ArrayList<Album> result) {
+			super.onPostExecute(result);
+
+			mAlbums = result;
+			mAdapter = new AlbumListAdapter(AlbumListActivity.this,
+					R.layout.album_list_item, mAlbums);
+			setListAdapter(mAdapter);
+
+			hideSplash();
+		}
+
+	}
+
+	private void showSplash() {
+		mSplashDialog = new Dialog(this, R.style.SplashScreen);
+		mSplashDialog.setContentView(R.layout.splash_screen);
+		mSplashDialog.setCancelable(false);
+		mSplashDialog.show();
+
+		final Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				hideSplash();
+			}
+		}, 3000);
+	}
+
+	private void hideSplash() {
+		if (mSplashDialog != null) {
+			mSplashDialog.dismiss();
+			mSplashDialog = null;
+		}
 	}
 
 	@Override
@@ -152,13 +211,6 @@ public class AlbumListActivity extends SherlockListActivity {
 	};
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-
-		loadAlbums();
-	}
-
-	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 
@@ -171,13 +223,6 @@ public class AlbumListActivity extends SherlockListActivity {
 		imageListIntent.putExtras(bundle);
 
 		AlbumListActivity.this.startActivity(imageListIntent);
-	}
-
-	private void loadAlbums() {
-		mAlbums = mAlbumDAO.getAll();
-
-		mAdapter = new AlbumListAdapter(this, R.layout.album_list_item, mAlbums);
-		setListAdapter(mAdapter);
 	}
 
 	@Override
