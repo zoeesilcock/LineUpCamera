@@ -11,7 +11,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.zoeetrope.lineupcamera.R;
-import com.zoeetrope.lineupcamera.R.id;
 import com.zoeetrope.lineupcamera.models.Album;
 import com.zoeetrope.lineupcamera.models.Image;
 

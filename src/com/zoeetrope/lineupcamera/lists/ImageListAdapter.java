@@ -18,8 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.zoeetrope.lineupcamera.R;
-import com.zoeetrope.lineupcamera.R.id;
-import com.zoeetrope.lineupcamera.R.string;
 import com.zoeetrope.lineupcamera.models.Album;
 import com.zoeetrope.lineupcamera.models.Image;
 
