@@ -171,9 +171,7 @@ public class ImageListActivity extends SherlockActivity implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == android.R.id.home) {
-			Intent intent = new Intent(this, AlbumListActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
+			finish();
 			return true;
 		} else if (item.getItemId() == R.id.newPicture) {
 			mController.handle(ImageListController.MESSAGE_CREATE_IMAGE);
