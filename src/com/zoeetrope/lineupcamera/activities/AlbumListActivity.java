@@ -1,16 +1,15 @@
 package com.zoeetrope.lineupcamera.activities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -25,64 +24,63 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.zoeetrope.lineupcamera.R;
-import com.zoeetrope.lineupcamera.daos.AlbumDAO;
+import com.zoeetrope.lineupcamera.controllers.AlbumListController;
 import com.zoeetrope.lineupcamera.lists.AlbumListAdapter;
 import com.zoeetrope.lineupcamera.models.Album;
 
-public class AlbumListActivity extends SherlockListActivity {
+public class AlbumListActivity extends SherlockListActivity implements
+		Handler.Callback {
 
 	static final int DIALOG_NEW_ALBUM_ID = 0;
 	static final int DIALOG_RENAME_ALBUM_ID = 1;
 	static final int DIALOG_DELETE_ALBUM_ID = 2;
 
+	private AlbumListController mController;
 	private ArrayList<Album> mAlbums;
 	private AlbumListAdapter mAdapter;
-	private AlbumDAO mAlbumDAO;
 	private Dialog mSplashDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mAlbumDAO = new AlbumDAO();
+		showSplash();
+
 		setContentView(R.layout.album_list);
 		registerForContextMenu(getListView());
 
-		showSplash();
-		loadAlbums();
+		mAlbums = new ArrayList<Album>();
+		mController = new AlbumListController(this, mAlbums);
+		mController.addOutboxHandler(new Handler(this));
+
+		mAdapter = new AlbumListAdapter(AlbumListActivity.this,
+				R.layout.album_list_item, mAlbums);
+		setListAdapter(mAdapter);
+
+		mController.handle(AlbumListController.MESSAGE_LOAD_ALBUMS);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 
-		loadAlbums();
+		mController.handle(AlbumListController.MESSAGE_LOAD_ALBUMS);
 	}
 
-	private void loadAlbums() {
-		new LoadAlbumsTask().execute();
-	}
-
-	private class LoadAlbumsTask extends
-			AsyncTask<Void, Integer, ArrayList<Album>> {
-
-		@Override
-		protected ArrayList<Album> doInBackground(Void... params) {
-			return mAlbumDAO.getAll();
+	@Override
+	public boolean handleMessage(Message message) {
+		switch (message.what) {
+		case AlbumListController.MESSAGE_MODEL_UPDATED:
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					hideSplash();
+					mAdapter.notifyDataSetChanged();
+				}
+			});
+			return true;
 		}
-
-		@Override
-		protected void onPostExecute(ArrayList<Album> result) {
-			super.onPostExecute(result);
-
-			mAlbums = result;
-			mAdapter = new AlbumListAdapter(AlbumListActivity.this,
-					R.layout.album_list_item, mAlbums);
-			setListAdapter(mAdapter);
-
-			hideSplash();
-		}
-
+		return false;
 	}
 
 	private void showSplash() {
@@ -126,17 +124,13 @@ public class AlbumListActivity extends SherlockListActivity {
 					new OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							Intent cameraIntent = new Intent();
-							cameraIntent.setComponent(new ComponentName(
-									AlbumListActivity.this,
-									LineUpCameraActivity.class));
+							HashMap<String, Object> params = new HashMap<String, Object>();
+							params.put("index", albumIndex);
+							params.put("name", nameField.getText().toString());
 
-							Bundle bundle = new Bundle();
-							bundle.putString("ALBUM", nameField.getText()
-									.toString());
-							cameraIntent.putExtras(bundle);
-
-							AlbumListActivity.this.startActivity(cameraIntent);
+							mController.handle(
+									AlbumListController.MESSAGE_CREATE_ALBUM,
+									params);
 						}
 					});
 			break;
@@ -147,10 +141,14 @@ public class AlbumListActivity extends SherlockListActivity {
 					new OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							Album album = mAlbums.get(albumIndex);
-
-							mAlbumDAO.rename(album, nameField.getText()
+							HashMap<String, Object> params = new HashMap<String, Object>();
+							params.put("index", albumIndex);
+							params.put("new_name", nameField.getText()
 									.toString());
+
+							mController.handle(
+									AlbumListController.MESSAGE_RENAME_ALBUM,
+									params);
 						}
 					});
 			break;
@@ -161,12 +159,12 @@ public class AlbumListActivity extends SherlockListActivity {
 
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
-							mAlbumDAO.remove(mAlbums.get(albumIndex));
+							HashMap<String, Object> params = new HashMap<String, Object>();
+							params.put("index", albumIndex);
 
-							mAlbums.remove(albumIndex);
-
-							mAdapter.notifyDataSetChanged();
-							getListView().invalidateViews();
+							mController.handle(
+									AlbumListController.MESSAGE_REMOVE_ALBUM,
+									params);
 						}
 
 					});
@@ -214,15 +212,9 @@ public class AlbumListActivity extends SherlockListActivity {
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 
-		Intent imageListIntent = new Intent();
-		imageListIntent.setComponent(new ComponentName(AlbumListActivity.this,
-				ImageListActivity.class));
-
-		Bundle bundle = new Bundle();
-		bundle.putString("ALBUM", mAlbums.get(position).getName());
-		imageListIntent.putExtras(bundle);
-
-		AlbumListActivity.this.startActivity(imageListIntent);
+		HashMap<String, Object> params = new HashMap<String, Object>();
+		params.put("index", position);
+		mController.handle(AlbumListController.MESSAGE_VIEW_ALBUM, params);
 	}
 
 	@Override
