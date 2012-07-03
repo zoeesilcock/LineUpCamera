@@ -1,12 +1,15 @@
 package com.zoeetrope.lineupcamera.activities;
 
+import java.util.HashMap;
+
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
@@ -21,12 +24,15 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.zoeetrope.lineupcamera.R;
+import com.zoeetrope.lineupcamera.controllers.ImageListController;
 import com.zoeetrope.lineupcamera.lists.ImageListAdapter;
 import com.zoeetrope.lineupcamera.models.Album;
 import com.zoeetrope.lineupcamera.models.Image;
 
-public class ImageListActivity extends SherlockActivity {
+public class ImageListActivity extends SherlockActivity implements
+		Handler.Callback {
 
+	private ImageListController mController;
 	private Album mAlbum;
 	private GridView mGridview;
 	private ImageListAdapter mAdapter;
@@ -38,47 +44,28 @@ public class ImageListActivity extends SherlockActivity {
 		setContentView(R.layout.image_list);
 		mGridview = (GridView) findViewById(R.id.gridview);
 
-		ActionBar bar = getSupportActionBar();
 		Bundle extras = getIntent().getExtras();
 
 		if (extras != null) {
 			mAlbum = new Album(extras.getString("ALBUM"));
+			mController = new ImageListController(this, mAlbum);
+			mController.addOutboxHandler(new Handler(this));
+
 			mAdapter = new ImageListAdapter(this, R.layout.image_list_item,
 					mAlbum);
-
-			bar.setTitle((CharSequence) mAlbum.getName());
-			bar.setSubtitle(mAlbum.getImages().size() + " "
-					+ getResources().getString(R.string.picture_count));
-			bar.setDisplayHomeAsUpEnabled(true);
-			bar.setHomeButtonEnabled(true);
-
-			Image latestImage = mAlbum.getLatestImage();
-
-			if (latestImage != null) {
-				Bitmap bitmap = latestImage.getThumbnail();
-
-				if (bitmap != null) {
-					bar.setIcon(new BitmapDrawable(getResources(), bitmap));
-				}
-			}
 
 			mGridview.setAdapter(mAdapter);
 			mGridview.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View v,
 						int position, long id) {
-					Intent imageIntent = new Intent();
-					imageIntent.setComponent(new ComponentName(
-							ImageListActivity.this, ImageActivity.class));
-
-					Bundle bundle = new Bundle();
-					bundle.putString("ALBUM", mAlbum.getName());
-					bundle.putInt("POSITION", position);
-					imageIntent.putExtras(bundle);
-
-					ImageListActivity.this.startActivity(imageIntent);
+					HashMap<String, Object> params = new HashMap<String, Object>();
+					params.put("index", position);
+					mController.handle(ImageListController.MESSAGE_VIEW_IMAGE,
+							params);
 				}
 			});
 
+			initActionBar();
 			registerForContextMenu(mGridview);
 		}
 	}
@@ -87,8 +74,41 @@ public class ImageListActivity extends SherlockActivity {
 	protected void onResume() {
 		super.onResume();
 
-		mAlbum.loadImages();
-		mGridview.invalidateViews();
+		mController.handle(ImageListController.MESSAGE_LOAD_IMAGES);
+	}
+
+	private void initActionBar() {
+		ActionBar bar = getSupportActionBar();
+		Image latestImage = mAlbum.getLatestImage();
+
+		bar.setTitle((CharSequence) mAlbum.getName());
+		bar.setSubtitle(mAlbum.getImages().size() + " "
+				+ getResources().getString(R.string.picture_count));
+		bar.setDisplayHomeAsUpEnabled(true);
+		bar.setHomeButtonEnabled(true);
+
+		if (latestImage != null) {
+			Bitmap bitmap = latestImage.getThumbnail();
+
+			if (bitmap != null) {
+				bar.setIcon(new BitmapDrawable(getResources(), bitmap));
+			}
+		}
+	}
+
+	@Override
+	public boolean handleMessage(Message message) {
+		switch (message.what) {
+		case ImageListController.MESSAGE_MODEL_UPDATED:
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					mAdapter.notifyDataSetChanged();
+				}
+			});
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -115,9 +135,11 @@ public class ImageListActivity extends SherlockActivity {
 
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
-							mAlbum.remove(imageIndex);
-							mAdapter.notifyDataSetChanged();
-							mGridview.invalidateViews();
+							HashMap<String, Object> params = new HashMap<String, Object>();
+							params.put("index", imageIndex);
+							mController.handle(
+									ImageListController.MESSAGE_REMOVE_IMAGE,
+									params);
 						}
 
 					});
@@ -154,17 +176,10 @@ public class ImageListActivity extends SherlockActivity {
 			startActivity(intent);
 			return true;
 		} else if (item.getItemId() == R.id.newPicture) {
-			Intent cameraIntent = new Intent();
-			cameraIntent.setComponent(new ComponentName(this,
-					LineUpCameraActivity.class));
-
-			Bundle bundle = new Bundle();
-			bundle.putString("ALBUM", mAlbum.getName());
-			cameraIntent.putExtras(bundle);
-
-			this.startActivity(cameraIntent);
+			mController.handle(ImageListController.MESSAGE_CREATE_IMAGE);
 		}
 
 		return super.onOptionsItemSelected(item);
 	}
+
 }
